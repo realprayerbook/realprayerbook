@@ -5,7 +5,7 @@ interface DonationUIProps {
   onComplete: () => void;
 }
 
-const PHYSICAL_THRESHOLD = 25;
+const PHYSICAL_THRESHOLD = 24;
 
 const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
   const [amount, setAmount] = useState(45);
@@ -44,7 +44,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
 
   const tiers = [
     { label: 'Supporter', value: 15, desc: 'Complete Digital Archive (PDF/EPUB)', icon: 'spa' },
-    { label: 'Guardian', value: 45, desc: 'Physical Edition + Audio Meditations', icon: 'filter_vintage', recommended: true },
+    { label: 'Guardian', value: 24, desc: 'Physical Edition + Gift Copy + Membership', icon: 'filter_vintage', recommended: true },
     { label: 'Patron', value: 95, desc: 'Special Award Edition + Mentoring Access', icon: 'auto_awesome' },
   ];
 
@@ -70,8 +70,14 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
             <div className="text-center md:text-right bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-md">
               <p className="text-[11px] uppercase tracking-[0.4em] text-white/70 mb-3 font-black">Archive Status</p>
               <p className={`text-2xl font-regal italic font-black ${isPhysical ? 'text-brand-gold' : 'text-white'}`}>
-                {isPhysical ? 'Physical + Digital' : 'Digital Archive Only'}
+                {isPhysical ? 'Physical + Gift Copy' : 'Digital Archive Only'}
               </p>
+              {isPhysical && (
+                <div className="mt-2 inline-flex items-center gap-2 text-brand-gold/80 text-[10px] font-bold uppercase tracking-widest border border-brand-gold/30 px-3 py-1 rounded-full">
+                  <span className="material-symbols-outlined text-sm">verified</span>
+                  Free Membership Included
+                </div>
+              )}
             </div>
           </div>
 
@@ -98,25 +104,53 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
         </div>
 
         <div ref={formRef} className="overflow-hidden">
-          <div className="pt-12 space-y-10 border-t border-white/20 mt-12 text-left">
-            <div className="flex items-center gap-4">
-               <span className="material-symbols-outlined text-brand-gold text-3xl">local_shipping</span>
-               <h5 className="font-regal text-3xl text-white font-black italic">Dispatch Details</h5>
+          <div className="pt-12 space-y-12 border-t border-white/20 mt-12 text-left">
+            
+            {/* User Shipping Details */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                 <span className="material-symbols-outlined text-brand-gold text-3xl">local_shipping</span>
+                 <h5 className="font-regal text-2xl text-white font-black italic">Your Dispatch Details</h5>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/5 p-6 rounded-[2rem] border border-white/5">
+                <div className="space-y-3">
+                   <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Your Name</label>
+                   <input type="text" placeholder="Your Name" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                </div>
+                <div className="space-y-3">
+                   <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Your Phone</label>
+                   <input type="text" placeholder="+1 (555) 000-0000" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                </div>
+                <div className="md:col-span-2 space-y-3">
+                   <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Your Shipping Address</label>
+                   <input type="text" placeholder="123 Sovereign Street, Alignment City" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-3">
-                 <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Full Name</label>
-                 <input type="text" placeholder="Your Name" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+
+            {/* Friend / Gift Details */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                 <div className="size-10 rounded-full bg-brand-gold flex items-center justify-center text-brand-purple">
+                   <span className="material-symbols-outlined text-2xl">volunteer_activism</span>
+                 </div>
+                 <div>
+                   <h5 className="font-regal text-2xl text-white font-black italic">Pay it Forward</h5>
+                   <p className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">Gift a Copy to a Friend</p>
+                 </div>
               </div>
-              <div className="space-y-3">
-                 <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Phone</label>
-                 <input type="text" placeholder="+1 (555) 000-0000" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
-              </div>
-              <div className="md:col-span-2 space-y-3">
-                 <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Shipping Address</label>
-                 <input type="text" placeholder="123 Sovereign Street, Alignment City" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/5 p-6 rounded-[2rem] border border-white/5">
+                <div className="space-y-3">
+                   <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Friend's Name</label>
+                   <input type="text" placeholder="Friend's Name" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                </div>
+                <div className="md:col-span-2 space-y-3">
+                   <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Friend's Shipping Address</label>
+                   <input type="text" placeholder="456 Awakening Ave, Liberty Town" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                </div>
               </div>
             </div>
+
           </div>
         </div>
         
@@ -124,7 +158,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
           onClick={onComplete}
           className="w-full mt-16 py-8 bg-brand-gold text-brand-purple rounded-[2rem] font-black text-sm tracking-[0.4em] uppercase gold-glow hover:bg-white hover:scale-[1.02] transition-all shadow-2xl"
         >
-          {isPhysical ? 'Secure Physical Copy' : 'Get Digital Archive'}
+          {isPhysical ? 'Secure Both Copies + Membership' : 'Get Digital Archive'}
         </button>
       </div>
 
