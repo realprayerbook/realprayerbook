@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ onCtaClick }) => {
              onClick={onCtaClick}
              className="px-8 py-3 bg-brand-gold text-brand-purple font-black uppercase tracking-[0.2em] text-xs rounded-full hover:bg-white hover:text-brand-obsidian transition-colors shadow-[0_0_30px_rgba(212,175,55,0.3)]"
            >
-             Dispatch Details
+             Claim Your Copy
            </button>
         </nav>
       </div>
@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({ onCtaClick }) => {
              onClick={() => { setIsMobileMenuOpen(false); onCtaClick(); }}
              className="px-10 py-4 bg-brand-gold text-brand-purple font-black uppercase tracking-[0.2em] text-sm rounded-full shadow-[0_0_30px_rgba(212,175,55,0.3)]"
            >
-             Dispatch Details
+             Claim Your Copy
            </button>
       </div>
     </header>

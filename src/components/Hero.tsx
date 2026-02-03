@@ -59,52 +59,62 @@ const Hero: React.FC<HeroProps> = ({ onCtaClick, onPrologueClick }) => {
             <span className="text-brand-gold text-xs font-black tracking-[0.2em] uppercase">The Science of Alignment</span>
           </div>
           
-          <h1 className="text-5xl lg:text-7xl font-regal text-white leading-[1.1]">
+          <h1 className="text-4xl lg:text-7xl font-regal text-white leading-[1.2] lg:leading-[1.1]">
             Stop <span className="text-brand-magenta italic">Begging</span> for <br/>
             Miracles
           </h1>
           
-          <p className="text-xl text-brand-ivory/80 font-light leading-relaxed max-w-2xl mx-auto lg:mx-0">
-            Prayer is not a hope. It is a scientific command given to the unified field. 
-            Learn to align your frequency and command your reality.
+          <h2 className="text-xl lg:text-3xl text-brand-gold font-regal leading-relaxed">
+            Command Your Reality Through the Science of Alignment
+          </h2>
+
+          <p className="text-lg lg:text-xl text-brand-ivory/80 font-light leading-relaxed max-w-2xl mx-auto lg:mx-0">
+            Most people fail at prayer because they speak from fear. Learn to regulate your nervous system, bypass the "New Age" noise, and enter into direct communion with Source.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start pt-8">
             <button 
               onClick={onCtaClick}
-              className="px-8 py-4 bg-brand-gold text-brand-obsidian rounded-full font-bold tracking-widest uppercase hover:scale-105 transition-transform shadow-[0_0_40px_rgba(212,175,55,0.4)]"
+              className="px-8 py-4 bg-brand-gold text-brand-obsidian rounded-full font-bold tracking-widest uppercase hover:scale-105 transition-transform shadow-[0_0_40px_rgba(212,175,55,0.4)] text-sm lg:text-base"
             >
               Get The Archive
             </button>
             <button 
               onClick={onPrologueClick}
-              className="px-8 py-4 border-2 border-white/20 rounded-full text-white font-bold tracking-widest uppercase hover:bg-white hover:text-brand-obsidian transition-colors"
+              className="px-8 py-4 border-2 border-white/20 rounded-full text-white font-bold tracking-widest uppercase hover:bg-white hover:text-brand-obsidian transition-colors text-sm lg:text-base"
             >
               Read Prologue
             </button>
           </div>
         </div>
 
-        {/* 3D Book Visual */}
-        <div className="relative perspective-1000 flex justify-center">
-          <div ref={bookRef} className="relative w-[300px] h-[460px] preserve-3d">
-            <div className="absolute inset-0 rounded-r-lg shadow-[20px_20px_60px_rgba(0,0,0,0.5)] bg-brand-obsidian border-l-4 border-white/10">
-               {/* Placeholder for Book Cover if image load fails */}
-               <img 
-                 src="/assets/book_cover.jpg" 
-                 alt="Real Prayer Book Cover" 
-                 className="w-full h-full object-cover rounded-r-lg"
-                 onError={(e) => {
-                   (e.target as HTMLImageElement).src = 'https://placehold.co/600x900/1E0B36/D4AF37?text=Real+Prayer';
-                 }}
-               />
-               {/* Shine effect */}
-               <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none rounded-r-lg mix-blend-overlay"></div>
-            </div>
+        {/* 3D Book / Author Visual */}
+        <div className="relative perspective-1000 flex justify-center mt-12 lg:mt-0">
+          {/* Mobile: Flex Column Layout to separate Image and Text completely */}
+          <div className="flex flex-col gap-8 w-full max-w-md lg:block">
+              
+              {/* Image Container */}
+              <div className="relative rounded-[2.5rem] lg:rounded-[4rem] overflow-hidden aspect-[4/5] lg:aspect-[4/5.5] shadow-2xl border-4 border-white/20 group w-full">
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-all duration-1000 group-hover:scale-110" 
+                  style={{ backgroundImage: "url('/assets/author.jpg')" }}
+                ></div>
+                {/* Gradient Only for desktop overlay effect, removed on mobile to show full image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-purple/95 via-transparent to-transparent hidden lg:block"></div>
+              </div>
+
+              {/* Award Card - Relative block on Mobile (below image), Absolute Overlay on Desktop */}
+              <div className="relative lg:absolute lg:bottom-12 lg:left-12 lg:right-12 z-20">
+                <div className="bg-brand-obsidian/80 lg:bg-white/10 backdrop-blur-xl lg:backdrop-blur-3xl px-6 py-6 lg:px-12 lg:py-10 rounded-3xl lg:rounded-[3rem] shadow-2xl border border-white/10 lg:border-2 lg:border-white/30 text-center lg:text-left">
+                   <div className="flex items-center justify-center lg:justify-start gap-3 lg:gap-5 mb-3 lg:mb-4">
+                     <span className="material-symbols-outlined text-brand-gold text-3xl lg:text-4xl drop-shadow-lg">verified</span>
+                     <p className="text-white font-black uppercase tracking-[0.2em] lg:tracking-[0.4em] text-[10px] lg:text-xs">Transmitting Frequency</p>
+                   </div>
+                   <p className="text-white font-regal text-lg lg:text-3xl font-black italic leading-tight">"Outstanding Program Impact Award"</p>
+                </div>
+              </div>
+
           </div>
-          
-          {/* Floor Glow */}
-          <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-64 h-12 bg-brand-gold/30 blur-[60px] rounded-full"></div>
         </div>
 
       </div>

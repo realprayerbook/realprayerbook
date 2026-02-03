@@ -37,16 +37,16 @@ const SocialProof: React.FC = () => {
   return (
     <section className="py-24 px-6" id="testimonials">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8 reveal-section">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 lg:mb-20 gap-8 reveal-section">
           <div>
-            <span className="text-brand-gold font-black uppercase tracking-[0.5em] text-xs">Transmissions of Truth</span>
-            <h2 className="text-6xl font-regal font-black mt-6 text-white tracking-tight">Voices of Connection</h2>
+            <span className="text-brand-gold font-black uppercase tracking-[0.3em] lg:tracking-[0.5em] text-[10px] lg:text-xs">Transmissions of Truth</span>
+            <h2 className="text-4xl lg:text-6xl font-regal font-black mt-4 lg:mt-6 text-white tracking-tight">Voices of Connection</h2>
           </div>
-          <div className="flex items-center gap-5 px-10 py-5 glass-card rounded-full border-2 border-white/20 shadow-2xl">
+          <div className="flex items-center gap-3 lg:gap-5 px-6 lg:px-10 py-3 lg:py-5 glass-card rounded-full border-2 border-white/20 shadow-2xl">
             <div className="flex text-brand-gold gap-1">
-              {[1,2,3,4,5].map(i => <span key={i} className="material-symbols-outlined text-xl">star</span>)}
+              {[1,2,3,4,5].map(i => <span key={i} className="material-symbols-outlined text-base lg:text-xl">star</span>)}
             </div>
-            <span className="font-black text-xs tracking-[0.3em] uppercase text-white">4.9/5 FREQUENCY</span>
+            <span className="font-black text-[10px] lg:text-xs tracking-[0.2em] lg:tracking-[0.3em] uppercase text-white">4.9/5 FREQUENCY</span>
           </div>
         </div>
         
