@@ -1,68 +1,70 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface FooterProps {
-  onCtaClick?: () => void;
+  onCtaClick: () => void;
 }
 
 const Footer: React.FC<FooterProps> = ({ onCtaClick }) => {
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
+
   return (
-    <footer className="bg-[#110620] border-t border-white/10 pt-24 pb-12 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
-          <div className="col-span-1 md:col-span-2 space-y-8">
-            <div className="flex items-center gap-4">
-              <span className="material-symbols-outlined text-brand-gold text-4xl">spa</span>
-              <span className="text-2xl font-regal font-black tracking-widest text-brand-gold uppercase">REAL PRAYER</span>
-            </div>
-            <p className="text-white font-medium max-w-sm text-base tracking-wide leading-relaxed italic opacity-90">
-              Guiding souls back to the sacred center. Join our global community of conscious seekers. An independent publishing transmission by Dr. Louise Van der Velde.
-            </p>
-            <div className="flex gap-6">
-              {['share', 'mail', 'language'].map(icon => (
-                <a key={icon} className="size-14 rounded-full glass-card flex items-center justify-center hover:bg-brand-gold hover:text-brand-purple transition-all text-brand-gold border border-white/10" href="#">
-                  <span className="material-symbols-outlined text-2xl">{icon}</span>
-                </a>
-              ))}
-            </div>
+    <footer className="bg-brand-obsidian py-12 border-t border-white/10 relative z-10">
+      <div className="container mx-auto px-6">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="text-center md:text-left">
+            <h4 className="font-regal text-2xl text-white mb-2">Real Prayer</h4>
+            <p className="text-white/40 text-sm">© {new Date().getFullYear()} Dr. Louise Van der Velde. All rights reserved.</p>
           </div>
           
-          <div className="space-y-8">
-            <h5 className="font-regal text-sm font-bold uppercase tracking-[0.4em] text-brand-gold">Navigation</h5>
-            <ul className="space-y-5 text-white text-[11px] tracking-[0.3em] uppercase font-black opacity-100">
-              <li><a className="hover:text-brand-gold transition-colors" href="#hero">The Book</a></li>
-              <li><a className="hover:text-brand-gold transition-colors" href="#author">Dr. Louise</a></li>
-              <li><a className="hover:text-brand-gold transition-colors" href="#donate">Donate Now</a></li>
-              <li><button onClick={onCtaClick} className="hover:text-brand-gold transition-colors text-left uppercase">Elite Access</button></li>
-            </ul>
+          <div className="flex gap-6">
+             <button onClick={() => setPrivacyOpen(true)} className="text-white/40 hover:text-brand-gold transition-colors text-sm uppercase tracking-widest">Privacy Policy</button>
+             <button onClick={() => setTermsOpen(true)} className="text-white/40 hover:text-brand-gold transition-colors text-sm uppercase tracking-widest">Terms of Service</button>
           </div>
 
-          <div className="space-y-8">
-            <h5 className="font-regal text-sm font-bold uppercase tracking-[0.4em] text-brand-gold">Stay Connected</h5>
-            <p className="text-[11px] text-white/90 leading-relaxed uppercase tracking-[0.25em] font-bold">Divine wisdom in your inbox.</p>
-            <div className="flex border-b border-brand-gold/30 pb-3 group">
-              <input 
-                className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-white/30 text-white outline-none font-bold tracking-widest" 
-                placeholder="EMAIL ADDRESS" 
-                type="email"
-              />
-              <button className="text-brand-gold material-symbols-outlined group-hover:translate-x-2 transition-transform">arrow_forward</button>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
-          <p className="text-[10px] text-white/50 font-black uppercase tracking-[0.5em]">© 2025 REAL PRAYER. DESIGNED BY LIGHT.</p>
-          <div className="flex gap-12 text-[10px] text-white/50 font-black uppercase tracking-[0.5em]">
-            <a className="hover:text-white transition-colors" href="#">TERMS</a>
-            <a className="hover:text-white transition-colors" href="#">PRIVACY</a>
-            <span className="text-brand-gold/60">SYSTEM V2.0.4</span>
-          </div>
-        </div>
-
-        <div className="mt-20 p-10 bg-brand-purple/40 rounded-[3rem] border border-white/10 text-[11px] text-white font-bold leading-loose uppercase tracking-[0.3em] text-center max-w-4xl mx-auto shadow-2xl">
-          PWA ARCHIVE ACTIVATED. For optimized sovereign access, select "Add to Home Screen" from your mobile browser menu. All transmissions secured via 256-bit coherence protocol.
+          <button onClick={onCtaClick} className="text-brand-gold border border-brand-gold/30 px-6 py-2 rounded-full hover:bg-brand-gold hover:text-brand-obsidian transition-colors text-sm uppercase tracking-widest">
+            Get The Book
+          </button>
         </div>
       </div>
+
+      {/* Simplified Footer Modals */}
+      {(privacyOpen || termsOpen) && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => { setPrivacyOpen(false); setTermsOpen(false); }}></div>
+            <div className="relative bg-brand-obsidian border border-white/10 p-10 rounded-2xl max-w-2xl max-h-[80vh] overflow-y-auto shadow-2xl">
+                <button onClick={() => { setPrivacyOpen(false); setTermsOpen(false); }} className="absolute top-4 right-4 text-white/50 hover:text-white">
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+                <h3 className="text-2xl font-regal text-brand-gold mb-6">{privacyOpen ? 'Privacy Policy' : 'Terms of Service'}</h3>
+                <div className="prose prose-invert prose-sm text-white/70">
+                    {privacyOpen ? (
+                        <>
+                            <p><strong>Effective Date: {new Date().toLocaleDateString()}</strong></p>
+                            <p>Dr. Louise Van der Velde ("we", "our") respects your privacy. This policy outlines how we handle your data in relation to the 'Real Prayer' book and associated teachings.</p>
+                            <h4>1. Information Collection</h4>
+                            <p>We collect basic contact information (name, email, phone) only when you voluntarily provide it for the purpose of purchasing the book or receiving updates.</p>
+                            <h4>2. Use of Information</h4>
+                            <p>Your information is used solely to fulfill orders, deliver digital content, and provide "Divine Wisdom" updates. We never sell your data to third parties.</p>
+                            <h4>3. Security</h4>
+                            <p>We implement standard security protocols to protect your data during transmission and storage.</p>
+                        </>
+                    ) : (
+                        <>
+                            <p><strong>Welcome to Real Prayer.</strong></p>
+                            <p>By accessing this website and purchasing our materials, you agree to the following terms:</p>
+                            <h4>1. Intellectual Property</h4>
+                            <p>All content, including text, images, and audio transmissions, is the intellectual property of Dr. Louise Van der Velde. Unauthorized reproduction is prohibited.</p>
+                            <h4>2. Digital Goods</h4>
+                            <p>Digital downloads are non-refundable once accessed. Please ensure compatibility before purchasing.</p>
+                            <h4>3. Disclaimer</h4>
+                            <p>The materials provided are for spiritual and educational purposes. Results may vary dependent on individual alignment.</p>
+                        </>
+                    )}
+                </div>
+            </div>
+        </div>
+      )}
     </footer>
   );
 };

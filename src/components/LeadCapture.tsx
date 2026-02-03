@@ -27,8 +27,8 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ isOpen, onClose, onSuccess })
           <span className="material-symbols-outlined">close</span>
         </button>
         
-        <h3 className="text-2xl font-regal text-white mb-2">Claim Your Access</h3>
-        <p className="text-white/60 text-sm mb-6">Enter your details to proceed to the secure checkout.</p>
+        <h3 className="text-2xl font-regal text-brand-gold mb-2 text-center">Exclusive Access</h3>
+        <p className="text-white/80 text-center italic mb-6">"Divine Wisdom coming your way here"</p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

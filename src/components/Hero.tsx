@@ -3,9 +3,10 @@ import { gsap } from 'gsap';
 
 interface HeroProps {
   onCtaClick: () => void;
+  onPrologueClick: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onCtaClick }) => {
+const Hero: React.FC<HeroProps> = ({ onCtaClick, onPrologueClick }) => {
   const bookRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -75,9 +76,12 @@ const Hero: React.FC<HeroProps> = ({ onCtaClick }) => {
             >
               Get The Archive
             </button>
-            <a href="#author" className="text-white hover:text-brand-gold transition-colors underline underline-offset-4 tracking-widest text-sm uppercase">
-              Meet Dr. Louise
-            </a>
+            <button 
+              onClick={onPrologueClick}
+              className="px-8 py-4 border-2 border-white/20 rounded-full text-white font-bold tracking-widest uppercase hover:bg-white hover:text-brand-obsidian transition-colors"
+            >
+              Read Prologue
+            </button>
           </div>
         </div>
 

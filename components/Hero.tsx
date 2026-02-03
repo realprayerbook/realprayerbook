@@ -3,37 +3,37 @@ import { gsap } from 'gsap';
 
 interface HeroProps {
   onCtaClick: () => void;
+  onPrologueClick: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onCtaClick }) => {
+const Hero: React.FC<HeroProps> = ({ onCtaClick, onPrologueClick }) => {
   const bookRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
     const ctx = gsap.context(() => {
-      gsap.fromTo(titleRef.current, 
-        { opacity: 0, x: 50 },
-        { opacity: 1, x: 0, duration: 1.5, ease: 'power4.out', delay: 0.2 }
-      );
+      // Float animation for the book
+      gsap.to(bookRef.current, {
+        y: -20,
+        rotation: 2,
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut'
+      });
 
-      gsap.fromTo(bookRef.current,
-        { y: 0 },
-        { y: -30, duration: 4, repeat: -1, yoyo: true, ease: 'sine.inOut' }
-      );
-
+      // Mouse move 3D tilt effect
       const handleMouseMove = (e: MouseEvent) => {
+        if (!bookRef.current || !containerRef.current) return;
         const { clientX, clientY } = e;
         const { innerWidth, innerHeight } = window;
-        const xPos = (clientX / innerWidth - 0.5) * 30;
-        const yPos = (clientY / innerHeight - 0.5) * -30;
-
+        const x = (clientX - innerWidth / 2) / 40;
+        const y = (clientY - innerHeight / 2) / 40;
+        
         gsap.to(bookRef.current, {
-          rotateY: xPos,
-          rotateX: yPos,
-          duration: 1.5,
+          rotationY: x,
+          rotationX: -y,
+          duration: 0.5,
           ease: 'power2.out'
         });
       };
@@ -46,62 +46,70 @@ const Hero: React.FC<HeroProps> = ({ onCtaClick }) => {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative pt-48 pb-24 px-6 max-w-7xl mx-auto min-h-screen flex items-center overflow-hidden" id="hero">
-      <div className="absolute inset-0 pointer-events-none opacity-20">
-        <div className="absolute top-20 left-10 w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
-        <div className="absolute top-40 right-40 w-1 h-1 bg-white rounded-full animate-pulse"></div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-        <div className="relative group order-2 lg:order-1" style={{ perspective: '3000px' }}>
-          <div className="absolute -inset-24 bg-brand-magenta/40 blur-[180px] rounded-full"></div>
-          <div 
-            ref={bookRef}
-            className="relative w-full max-w-sm mx-auto aspect-[3/4.5] rounded-xl overflow-hidden shadow-[0_0_120px_rgba(0,0,0,1)] border-2 border-white/20 transform-gpu"
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            {/* THE CORRECT BOOK COVER URL */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center" 
-              style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAMGZXZDs2l2j35DNNnKPdsmhc1FmkKqXT8RZeBx2mR8XzWwnPrx1mJnaVCtZjJHT8I7fgneNvG2Sd2PNhGrd7AciHErZksPDPBffzvouv_ADfOyiRdlz2HDPuSNiLoTv5HM-paxjgJZm2BxyuA66h0P0y45_IyT87iqGsU90rGsXEx5gcyCMPC4uFpU_qBBLRXxSDMXNJsbo4Us2YmQDwlXSudXZ2MSyli-e6xmJ3MeBJeBw2DP7yr6wwC7ELl9mGYpkJrot4lK5s')" }}
-            ></div>
-            
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-purple/90 via-transparent to-transparent"></div>
-            
-            <div className="absolute bottom-8 right-8 flex items-center gap-3 bg-brand-gold text-brand-purple px-5 py-2 rounded-full shadow-2xl border border-white/40 gold-glow">
-              <span className="material-symbols-outlined text-sm font-black">filter_vintage</span>
-              <span className="text-[10px] font-black uppercase tracking-widest">Sovereign Edition</span>
-            </div>
+    <section ref={containerRef} className="relative min-h-screen pt-32 pb-20 flex items-center justify-center overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-purple/50 via-brand-obsidian to-brand-obsidian z-0"></div>
+      
+      <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+        
+        {/* Text Content */}
+        <div className="text-center lg:text-left space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-gold/30 bg-brand-gold/5 backdrop-blur-sm">
+            <span className="material-symbols-outlined text-brand-gold text-lg">auto_awesome</span>
+            <span className="text-brand-gold text-xs font-black tracking-[0.2em] uppercase">The Science of Alignment</span>
           </div>
-        </div>
+          
+          <h1 className="text-5xl lg:text-7xl font-regal text-white leading-[1.1]">
+            Stop <span className="text-brand-magenta italic">Begging</span> for <br/>
+            Miracles
+          </h1>
+          
+          <h2 className="text-2xl lg:text-3xl text-brand-gold font-regal">
+            Command Your Reality Through the Science of Alignment
+          </h2>
 
-        <div ref={titleRef} className="flex flex-col gap-10 order-1 lg:order-2">
-          <div className="space-y-8">
-            <div className="flex items-center gap-4">
-              <span className="h-px w-12 bg-brand-gold"></span>
-              <span className="text-brand-gold text-xs font-black tracking-[0.4em] uppercase">Dr. Louise Van der Velde</span>
-            </div>
-            <h1 className="text-7xl md:text-9xl font-regal font-black leading-[0.85] text-white">
-              Real <br/><span className="text-brand-gold drop-shadow-2xl">Prayer</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-white font-light leading-relaxed max-w-xl opacity-100 italic">
-              Stop begging. Start commanding. A scientific journey through the mechanics of soul alignment.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-6">
+          <p className="text-xl text-brand-ivory/80 font-light leading-relaxed max-w-2xl mx-auto lg:mx-0">
+            Most people fail at prayer because they speak from fear. Learn to regulate your nervous system, bypass the "New Age" noise, and enter into direct communion with Source.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start pt-8">
             <button 
               onClick={onCtaClick}
-              className="bg-brand-gold hover:bg-white text-brand-purple px-12 py-5 rounded-full font-black text-xs transition-all flex items-center justify-center gap-4 gold-glow uppercase tracking-[0.3em]"
+              className="px-8 py-4 bg-brand-gold text-brand-obsidian rounded-full font-bold tracking-widest uppercase hover:scale-105 transition-transform shadow-[0_0_40px_rgba(212,175,55,0.4)]"
             >
-              <span>Donate to Download</span>
-              <span className="material-symbols-outlined">favorite</span>
+              Get The Archive
             </button>
-            <button className="border-2 border-white/40 bg-white/10 hover:bg-white/20 px-12 py-5 rounded-full font-black text-xs uppercase tracking-[0.3em] transition-all backdrop-blur-md text-white">
+            <button 
+              onClick={onPrologueClick}
+              className="px-8 py-4 border-2 border-white/20 rounded-full text-white font-bold tracking-widest uppercase hover:bg-white hover:text-brand-obsidian transition-colors"
+            >
               Read Prologue
             </button>
           </div>
         </div>
+
+        {/* 3D Book Visual */}
+        <div className="relative perspective-1000 flex justify-center">
+          <div ref={bookRef} className="relative w-[300px] h-[460px] preserve-3d">
+            <div className="absolute inset-0 rounded-r-lg shadow-[20px_20px_60px_rgba(0,0,0,0.5)] bg-brand-obsidian border-l-4 border-white/10">
+               {/* Placeholder for Book Cover if image load fails */}
+               <img 
+                 src="/assets/book_cover.jpg" 
+                 alt="Real Prayer Book Cover" 
+                 className="w-full h-full object-cover rounded-r-lg"
+                 onError={(e) => {
+                   (e.target as HTMLImageElement).src = 'https://placehold.co/600x900/1E0B36/D4AF37?text=Real+Prayer';
+                 }}
+               />
+               {/* Shine effect */}
+               <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none rounded-r-lg mix-blend-overlay"></div>
+            </div>
+          </div>
+          
+          {/* Floor Glow */}
+          <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-64 h-12 bg-brand-gold/30 blur-[60px] rounded-full"></div>
+        </div>
+
       </div>
     </section>
   );

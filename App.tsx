@@ -12,6 +12,7 @@ import IntroLoader from './components/IntroLoader';
 import LeadCapture from './components/LeadCapture';
 import Dashboard from './components/Dashboard';
 import Journal from './components/Journal';
+import PrologueModal from './components/PrologueModal';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -75,6 +76,8 @@ const App: React.FC = () => {
     return <Journal onBack={() => setView('dashboard')} />;
   }
 
+  const [isPrologueOpen, setIsPrologueOpen] = useState(false);
+
   return (
     <div className="min-h-screen relative overflow-x-hidden font-sans">
       {isLoading && <IntroLoader onComplete={() => setIsLoading(false)} />}
@@ -85,11 +88,19 @@ const App: React.FC = () => {
         onSuccess={handleLeadSuccess}
       />
 
+      <PrologueModal 
+        isOpen={isPrologueOpen} 
+        onClose={() => setIsPrologueOpen(false)} 
+      />
+
       <div className={`relative transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
         <Header onCtaClick={handleOpenLeadCapture} />
         
         <main>
-          <Hero onCtaClick={handleOpenLeadCapture} />
+          <Hero 
+            onCtaClick={handleOpenLeadCapture} 
+            onPrologueClick={() => setIsPrologueOpen(true)}
+          />
           
           <Features />
           

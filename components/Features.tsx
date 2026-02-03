@@ -13,8 +13,8 @@ const Features: React.FC = () => {
       icon: "filter_vintage"
     },
     {
-      title: "Command vs. Begging",
-      desc: "Shift your language from desperate pleading (which signals lack) to authoritative declaration (which signals alignment).",
+      title: "Cut Straight to Source",
+      desc: "Bypass the noise of 'New Age' distractions and fake gurus to establish a direct, unmediated line to Divine Intelligence.",
       icon: "bolt"
     }
   ];
