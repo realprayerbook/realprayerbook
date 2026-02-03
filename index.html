@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Prayer | Dr. Louise Van der Velde</title>
+    <meta name="description" content="Stop Begging for Miracles—Command Your Reality Through the Science of Alignment. A masterclass by Dr. Louise Van der Velde.">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1E0B36">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;400;600;700&family=Manrope:wght@200;400;500;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <!-- Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#1E0B36',
+                            magenta: '#9D2B66',
+                            gold: '#D4AF37',
+                            indigo: '#311B92',
+                            ivory: '#F8F6F7',
+                            obsidian: '#0A0510',
+                            primary: '#f4d125',
+                            accent: '#f1275a'
+                        }
+                    },
+                    fontFamily: {
+                        regal: ['Cinzel', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                        manrope: ['Manrope', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        newsreader: ['Newsreader', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --midnight-purple: #1E0B36;
+            --sunset-magenta: #9D2B66;
+            --solar-gold: #D4AF37;
+            --cosmic-indigo: #311B92;
+        }
+        html, body {
+            background-color: var(--midnight-purple);
+            color: #FFFFFF;
+            overflow-x: hidden;
+            opacity: 1 !important;
+        }
+        
+        /* High Performance Moving Cosmic Gradient */
+        @keyframes cosmicFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .cosmic-bg {
+            background: linear-gradient(-45deg, #1E0B36, #311B92, #9D2B66, #1E0B36);
+            background-size: 400% 400%;
+            animation: cosmicFlow 15s ease infinite;
+            background-attachment: fixed;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .gold-glow {
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+        }
+        
+        .lotus-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            color: var(--solar-gold);
+            margin: 6rem 0;
+        }
+        
+        .lotus-divider::before, .lotus-divider::after {
+            content: "";
+            height: 1px;
+            flex-grow: 1;
+            background: linear-gradient(to right, transparent, var(--solar-gold), transparent);
+        }
+
+        .masonry {
+            column-count: 1;
+            column-gap: 2rem;
+        }
+        @media (min-width: 768px) { .masonry { column-count: 3; } }
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 2rem;
+        }
+
+        /* Frequency Slider Styling (Journal) */
+        input[type=range].frequency-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            background: linear-gradient(90deg, #48232c, #d4af37, #f1275a);
+            border-radius: 2px;
+        }
+        input[type=range].frequency-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #d4af37;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime",
+    "gsap": "https://esm.sh/gsap@3.12.2",
+    "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.2/ScrollTrigger",
+    "@studio-freight/lenis": "https://esm.sh/@studio-freight/lenis@1.0.42",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "gsap/": "https://esm.sh/gsap@^3.14.2/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="cosmic-bg selection:bg-brand-magenta selection:text-white">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
