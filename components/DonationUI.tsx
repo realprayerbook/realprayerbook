@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { saveShippingDetails } from '../utils/db'; // Import our new DB function
 
 interface DonationUIProps {
   onComplete: () => void;
@@ -10,6 +11,15 @@ const PHYSICAL_THRESHOLD = 24;
 const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
   const [amount, setAmount] = useState(45);
   const [isPhysical, setIsPhysical] = useState(true);
+  
+  // Form State
+  const [userName, setUserName] = useState('');
+  const [userPhone, setUserPhone] = useState('');
+  const [userAddress, setUserAddress] = useState('');
+  const [friendName, setFriendName] = useState('');
+  const [friendAddress, setFriendAddress] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const formRef = useRef<HTMLDivElement>(null);
   const nudgeRef = useRef<HTMLDivElement>(null);
 
@@ -18,6 +28,35 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
     const shouldBePhysical = val >= PHYSICAL_THRESHOLD;
     if (shouldBePhysical !== isPhysical) {
       setIsPhysical(shouldBePhysical);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (isPhysical) {
+        if (!userName || !userPhone || !userAddress) {
+            alert('Please complete all shipping details for physical delivery.');
+            return;
+        }
+    }
+
+    setIsSubmitting(true);
+    try {
+        if (isPhysical) {
+            await saveShippingDetails({
+                user_name: userName,
+                user_phone: userPhone,
+                user_address: userAddress,
+                friend_name: friendName,
+                friend_address: friendAddress,
+                amount
+            });
+        }
+        onComplete();
+    } catch (error) {
+        console.error(error);
+        alert('There was an issue saving your shipping details. Please try again or contact support.');
+    } finally {
+        setIsSubmitting(false);
     }
   };
 
@@ -115,15 +154,33 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/5 p-6 rounded-[2rem] border border-white/5">
                 <div className="space-y-3">
                    <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Your Name</label>
-                   <input type="text" placeholder="Your Name" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                   <input 
+                     type="text" 
+                     placeholder="Your Name" 
+                     value={userName} 
+                     onChange={e => setUserName(e.target.value)}
+                     className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" 
+                   />
                 </div>
                 <div className="space-y-3">
                    <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Your Phone</label>
-                   <input type="text" placeholder="+1 (555) 000-0000" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                   <input 
+                     type="text" 
+                     placeholder="+1 (555) 000-0000" 
+                     value={userPhone} 
+                     onChange={e => setUserPhone(e.target.value)}
+                     className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" 
+                   />
                 </div>
                 <div className="md:col-span-2 space-y-3">
                    <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Your Shipping Address</label>
-                   <input type="text" placeholder="123 Sovereign Street, Alignment City" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                   <input 
+                     type="text" 
+                     placeholder="123 Sovereign Street, Alignment City" 
+                     value={userAddress} 
+                     onChange={e => setUserAddress(e.target.value)}
+                     className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" 
+                   />
                 </div>
               </div>
             </div>
@@ -142,11 +199,23 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/5 p-6 rounded-[2rem] border border-white/5">
                 <div className="space-y-3">
                    <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Friend's Name</label>
-                   <input type="text" placeholder="Friend's Name" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                   <input 
+                     type="text" 
+                     placeholder="Friend's Name" 
+                     value={friendName} 
+                     onChange={e => setFriendName(e.target.value)}
+                     className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" 
+                   />
                 </div>
                 <div className="md:col-span-2 space-y-3">
                    <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Friend's Shipping Address</label>
-                   <input type="text" placeholder="456 Awakening Ave, Liberty Town" className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" />
+                   <input 
+                     type="text" 
+                     placeholder="456 Awakening Ave, Liberty Town" 
+                     value={friendAddress} 
+                     onChange={e => setFriendAddress(e.target.value)}
+                     className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" 
+                   />
                 </div>
               </div>
             </div>
@@ -155,10 +224,11 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
         </div>
         
         <button 
-          onClick={onComplete}
-          className="w-full mt-16 py-8 bg-brand-gold text-brand-purple rounded-[2rem] font-black text-sm tracking-[0.4em] uppercase gold-glow hover:bg-white hover:scale-[1.02] transition-all shadow-2xl"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="w-full mt-16 py-8 bg-brand-gold text-brand-purple rounded-[2rem] font-black text-sm tracking-[0.4em] uppercase gold-glow hover:bg-white hover:scale-[1.02] transition-all shadow-2xl disabled:opacity-50"
         >
-          {isPhysical ? 'Secure Both Copies + Membership' : 'Get Digital Archive'}
+          {isSubmitting ? 'Processing...' : (isPhysical ? 'Secure Both Copies + Membership' : 'Get Digital Archive')}
         </button>
       </div>
 

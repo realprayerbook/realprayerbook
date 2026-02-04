@@ -1,12 +1,14 @@
+
 import React, { useState } from 'react';
 import Quiz from './Quiz';
 
 interface DashboardProps {
   onJournalClick: () => void;
   onLogout: () => void;
+  children?: React.ReactNode;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onLogout }) => {
+const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onLogout, children }) => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   return (
@@ -28,7 +30,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onLogout }) => {
             <a className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors" href="#">Library</a>
             <button onClick={onJournalClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Journal</button>
             <a className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors" href="#">Circles</a>
-            <a className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors" href="#">Transmissions</a>
+            {/* Inject dynamic links here (Community, Admin) */}
+            {children}
           </nav>
         </div>
         <button onClick={onLogout} className="text-xs uppercase tracking-widest font-bold text-white/50 hover:text-white transition-colors">Logout</button>
