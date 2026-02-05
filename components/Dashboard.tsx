@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import DailySignal from './DailySignal'; // New Component
 import Quiz from './Quiz';
 
 interface DashboardProps {
@@ -52,6 +52,22 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
               </div>
             </div>
           </div>
+
+
+          {/* Thank You Video */}
+          <div className="mb-12 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl relative aspect-video bg-black/40">
+              <iframe 
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/C4MnuBwrlHc?rel=0&modestbranding=1" 
+                title="RealPrayer Thank You" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+              ></iframe>
+          </div>
+
+          {/* Daily Coherence Signal */}
+          <DailySignal />
 
           {/* New Grid Layout for Download & Quiz */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">

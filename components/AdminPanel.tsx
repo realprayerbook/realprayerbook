@@ -131,7 +131,6 @@ const AdminPanel: React.FC = () => {
                         Publish to Community
                     </button>
                 </form>
-                </form>
             )}
             
             {view === 'orders' && (
@@ -157,7 +156,7 @@ const AdminPanel: React.FC = () => {
                                             {order.friend_name && (
                                                 <div>
                                                     <p className="text-[10px] uppercase tracking-widest text-brand-gold/70 mb-1">Gift For: {order.friend_name}</p>
-                                                    <p className="opacity-80 leading-relaxed">{order.friend_address}</p>
+                                                    <p className="opacity-80 leading-relaxed break-words">{order.friend_email}</p>
                                                 </div>
                                             )}
                                         </div>
@@ -171,7 +170,6 @@ const AdminPanel: React.FC = () => {
                             ))}
                         </div>
                     )}
-                </div>
                 </div>
             )}
         </div>

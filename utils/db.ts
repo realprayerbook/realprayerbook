@@ -6,7 +6,7 @@ export interface ShippingRequest {
   user_phone: string;
   user_address: string;
   friend_name?: string;
-  friend_address?: string;
+  friend_email?: string;
   amount: number;
 }
 

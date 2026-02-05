@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { saveShippingDetails } from '../utils/db'; // Import our new DB function
+import { saveShippingDetails } from '../utils/db'; // Keeping this if we want to save locally first, but checkout does it too.
 
 interface DonationUIProps {
   onComplete: () => void;
 }
 
 const PHYSICAL_THRESHOLD = 24;
+const MIN_AMOUNT = 5;
+const MAX_AMOUNT = 200;
 
 const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
   const [amount, setAmount] = useState(45);
@@ -17,7 +19,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
   const [userPhone, setUserPhone] = useState('');
   const [userAddress, setUserAddress] = useState('');
   const [friendName, setFriendName] = useState('');
-  const [friendAddress, setFriendAddress] = useState('');
+  const [friendEmail, setFriendEmail] = useState(''); 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formRef = useRef<HTMLDivElement>(null);
@@ -41,21 +43,44 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
 
     setIsSubmitting(true);
     try {
-        if (isPhysical) {
-            await saveShippingDetails({
-                user_name: userName,
-                user_phone: userPhone,
-                user_address: userAddress,
-                friend_name: friendName,
-                friend_address: friendAddress,
-                amount
-            });
+        // 1. First save to Supabase to capture the "intent" and shipping details
+        // This ensures we have the record even if they drop off at Stripe
+        await saveShippingDetails({
+            user_name: userName,
+            user_phone: userPhone,
+            user_address: userAddress,
+            friend_name: friendName,
+            friend_email: friendEmail,
+            amount
+        });
+
+        // 2. Call our API to create a Stripe Checkout Session
+        const response = await fetch('/api/create-checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                amount, // Send the slider amount
+                email: friendEmail || undefined, // Optional: Pre-fill email
+                isPhysical
+            }),
+        });
+
+        const data = await response.json();
+
+        if (data.url) {
+            // Redirect to Stripe
+            window.location.href = data.url;
+        } else {
+            console.error('Stripe error:', data);
+            alert('Could not initiate payment. Please try again.');
+            setIsSubmitting(false);
         }
-        onComplete();
+
     } catch (error) {
         console.error(error);
-        alert('There was an issue saving your shipping details. Please try again or contact support.');
-    } finally {
+        alert('There was an issue processing your request. Please try again.');
         setIsSubmitting(false);
     }
   };
@@ -83,7 +108,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
 
   const tiers = [
     { label: 'Supporter', value: 15, desc: 'Complete Digital Archive (PDF/EPUB)', icon: 'spa' },
-    { label: 'Guardian', value: 24, desc: 'Physical Edition + Gift Copy + Membership', icon: 'filter_vintage', recommended: true },
+    { label: 'Guardian', value: 24, desc: 'Physical Book + Membership + Friend Gift', icon: 'filter_vintage', recommended: true },
     { label: 'Patron', value: 95, desc: 'Special Award Edition + Mentoring Access', icon: 'auto_awesome' },
   ];
 
@@ -97,24 +122,30 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
 
       <div className="max-w-4xl mx-auto glass-card p-12 md:p-20 rounded-[4rem] border-2 border-white/20 mb-16 reveal-section relative shadow-[0_40px_100px_rgba(0,0,0,0.6)]">
         <div ref={nudgeRef} className="absolute -top-14 left-1/2 -translate-x-1/2 bg-brand-magenta text-white text-[11px] font-black uppercase py-3 px-8 rounded-full shadow-2xl border-2 border-white/30 whitespace-nowrap hidden opacity-0 z-20">
-          Add just ${PHYSICAL_THRESHOLD - amount} more to unlock the Physical Book!
+          Add just €{PHYSICAL_THRESHOLD - amount} more to unlock the Physical Book!
         </div>
 
         <div className="relative pt-12 pb-8">
           <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 gap-10">
             <div className="text-center md:text-left">
               <p className="text-[11px] uppercase tracking-[0.4em] text-white/70 mb-4 font-black">Your Divine Gift</p>
-              <h4 className="text-9xl font-regal font-black text-brand-gold drop-shadow-2xl">${amount}</h4>
+              <h4 className="text-9xl font-regal font-black text-brand-gold drop-shadow-2xl">€{amount}</h4>
             </div>
             <div className="text-center md:text-right bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-md">
               <p className="text-[11px] uppercase tracking-[0.4em] text-white/70 mb-3 font-black">Archive Status</p>
               <p className={`text-2xl font-regal italic font-black ${isPhysical ? 'text-brand-gold' : 'text-white'}`}>
-                {isPhysical ? 'Physical + Gift Copy' : 'Digital Archive Only'}
+                {isPhysical ? 'Physical + Membership + Gift' : 'Digital Archive Only'}
               </p>
               {isPhysical && (
-                <div className="mt-2 inline-flex items-center gap-2 text-brand-gold/80 text-[10px] font-bold uppercase tracking-widest border border-brand-gold/30 px-3 py-1 rounded-full">
-                  <span className="material-symbols-outlined text-sm">verified</span>
-                  Free Membership Included
+                <div className="mt-2 flex flex-col items-end gap-1">
+                  <div className="inline-flex items-center gap-2 text-brand-gold/80 text-[10px] font-bold uppercase tracking-widest border border-brand-gold/30 px-3 py-1 rounded-full">
+                    <span className="material-symbols-outlined text-sm">verified</span>
+                    1 Month Free Membership
+                  </div>
+                  <div className="inline-flex items-center gap-2 text-brand-gold/80 text-[10px] font-bold uppercase tracking-widest border border-brand-gold/30 px-3 py-1 rounded-full">
+                    <span className="material-symbols-outlined text-sm">card_giftcard</span>
+                    Free Friend Download
+                  </div>
                 </div>
               )}
             </div>
@@ -123,22 +154,22 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
           <div className="relative h-4 bg-white/10 rounded-full flex items-center">
             <input 
               type="range" 
-              min="5" 
-              max="250" 
+              min={MIN_AMOUNT} 
+              max={MAX_AMOUNT} 
               step="1"
               value={amount}
               onChange={(e) => updateAmount(parseInt(e.target.value))}
               className="w-full bg-transparent appearance-none cursor-pointer z-10"
             />
-            <div className="absolute left-0 h-full bg-brand-gold rounded-full" style={{ width: `${(amount/250)*100}%` }}></div>
+            <div className="absolute left-0 h-full bg-brand-gold rounded-full" style={{ width: `${((amount - MIN_AMOUNT) / (MAX_AMOUNT - MIN_AMOUNT)) * 100}%` }}></div>
           </div>
           
           <div className="flex justify-between mt-10 text-[9px] md:text-[11px] font-black text-white uppercase tracking-normal lg:tracking-[0.4em]">
-            <span className="opacity-60 text-left w-1/3">Supporter</span>
+            <span className="opacity-60 text-left w-1/3">Supporter (€{MIN_AMOUNT})</span>
             <span className={`text-center w-1/3 transition-transform ${isPhysical ? 'text-brand-gold scale-110' : 'opacity-40'}`}>
               <span className="block md:inline">Physical</span> <span className="block md:inline">Bound</span>
             </span>
-            <span className="opacity-60 text-right w-1/3">Patron</span>
+            <span className="opacity-60 text-right w-1/3">Patron (€{MAX_AMOUNT})</span>
           </div>
         </div>
 
@@ -193,7 +224,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
                  </div>
                  <div>
                    <h5 className="font-regal text-2xl text-white font-black italic">Pay it Forward</h5>
-                   <p className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">Gift a Copy to a Friend</p>
+                   <p className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">Gift a Digital Copy to a Friend</p>
                  </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/5 p-6 rounded-[2rem] border border-white/5">
@@ -207,13 +238,13 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
                      className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" 
                    />
                 </div>
-                <div className="md:col-span-2 space-y-3">
-                   <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Friend's Shipping Address</label>
+                <div className="space-y-3">
+                   <label className="text-[10px] font-black text-white/50 uppercase tracking-widest ml-4">Friend's Email (For Download)</label>
                    <input 
-                     type="text" 
-                     placeholder="456 Awakening Ave, Liberty Town" 
-                     value={friendAddress} 
-                     onChange={e => setFriendAddress(e.target.value)}
+                     type="email" 
+                     placeholder="friend@example.com" 
+                     value={friendEmail} 
+                     onChange={e => setFriendEmail(e.target.value)}
                      className="w-full bg-white/10 border-2 border-white/10 rounded-[1.5rem] px-8 py-5 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20" 
                    />
                 </div>
@@ -228,7 +259,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
           disabled={isSubmitting}
           className="w-full mt-16 py-8 bg-brand-gold text-brand-purple rounded-[2rem] font-black text-sm tracking-[0.4em] uppercase gold-glow hover:bg-white hover:scale-[1.02] transition-all shadow-2xl disabled:opacity-50"
         >
-          {isSubmitting ? 'Processing...' : (isPhysical ? 'Secure Both Copies + Membership' : 'Get Digital Archive')}
+          {isSubmitting ? 'Securing Transmission...' : (isPhysical ? 'Secure Both Copies + Membership' : 'Get Digital Archive')}
         </button>
       </div>
 
@@ -243,7 +274,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
             <div>
               <span className="material-symbols-outlined text-5xl text-brand-gold mb-6 block group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">{tier.icon}</span>
               <h3 className="font-regal text-3xl mb-3 text-white font-black">{tier.label}</h3>
-              <p className="text-5xl font-regal text-brand-gold font-black">${tier.value}+</p>
+              <p className="text-5xl font-regal text-brand-gold font-black">€{tier.value}+</p>
             </div>
             <p className="text-white text-base tracking-wide leading-relaxed font-normal opacity-100">{tier.desc}</p>
           </div>

@@ -46,11 +46,16 @@ const Features: React.FC = () => {
           <div className="absolute inset-0 bg-brand-indigo/80 rounded-[4rem] -rotate-3 blur-3xl"></div>
           <div className="relative glass-card p-6 rounded-[4rem] overflow-hidden shadow-[0_0_120px_rgba(0,0,0,1)] border-2 border-white/20">
             {/* Context Visual: Sacred Geometry / Meditation */}
-            <div className="aspect-[4/5] bg-cover bg-center rounded-[3rem] hover:scale-105 transition-transform duration-1000" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1200')" }}></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <button className="size-28 rounded-full bg-brand-magenta text-white flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_50px_rgba(157,43,102,0.8)] border-4 border-white/30">
-                <span className="material-symbols-outlined fill-current text-6xl">play_circle</span>
-              </button>
+            {/* Video Embed */}
+            <div className="aspect-[4/5] bg-brand-obsidian rounded-[3rem] overflow-hidden shadow-2xl relative group">
+                <iframe 
+                  className="absolute inset-0 w-full h-full" 
+                  src="https://www.youtube.com/embed/Xebx3GusdWk?rel=0&modestbranding=1" 
+                  title="RealPrayer Welcome" 
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
             </div>
           </div>
         </div>
