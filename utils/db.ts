@@ -56,3 +56,30 @@ export const getShippingRequests = async () => {
     if (error) throw error;
     return data;
 }
+
+export const saveSystemConfig = async (key: string, value: string) => {
+    const { error } = await supabase
+        .from('app_config')
+        .upsert([{ key, value, updated_at: new Date() }]);
+
+    if (error) {
+        console.error('Error saving config:', error);
+        throw error;
+    }
+};
+
+export const getSystemConfig = async (key: string) => {
+    const { data, error } = await supabase
+        .from('app_config')
+        .select('value')
+        .eq('key', key)
+        .single();
+    
+    if (error) {
+        // It's okay if not found, just return null
+        if (error.code === 'PGRST116') return null;
+        console.error('Error fetching config:', error);
+        return null;
+    }
+    return data?.value;
+};

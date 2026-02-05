@@ -1,20 +1,28 @@
 
 import React, { useEffect, useState } from 'react';
-import { createPost, getShippingRequests, ShippingRequest } from '../utils/db';
+import { createPost, getShippingRequests, saveSystemConfig, getSystemConfig } from '../utils/db';
 
 const AdminPanel: React.FC = () => {
-    const [view, setView] = useState<'create-post' | 'orders'>('create-post');
+    const [view, setView] = useState<'create-post' | 'orders' | 'settings'>('create-post');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [videoUrl, setVideoUrl] = useState('');
+    const [apiKey, setApiKey] = useState('');
     const [orders, setOrders] = useState<any[]>([]);
     const [loadingInfo, setLoadingInfo] = useState(false);
 
     useEffect(() => {
         if (view === 'orders') {
             loadOrders();
+        } else if (view === 'settings') {
+            loadSettings();
         }
     }, [view]);
+
+    const loadSettings = async () => {
+        const key = await getSystemConfig('GEMINI_API_KEY');
+        if (key) setApiKey(key);
+    };
 
     const loadOrders = async () => {
         setLoadingInfo(true);
@@ -42,6 +50,17 @@ const AdminPanel: React.FC = () => {
         }
     };
 
+    const handleSaveSettings = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await saveSystemConfig('GEMINI_API_KEY', apiKey);
+            alert('Settings Saved Successfully');
+        } catch (err) {
+            console.error(err);
+            alert('Error saving settings');
+        }
+    };
+
     return (
         <div className="max-w-7xl mx-auto px-6 py-12 min-h-screen">
             <h1 className="text-4xl font-regal text-brand-gold mb-12">Admin Command Center</h1>
@@ -59,9 +78,37 @@ const AdminPanel: React.FC = () => {
                 >
                   Dispatch Queue
                 </button>
+                <button 
+                  onClick={() => setView('settings')} 
+                  className={`px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${view === 'settings' ? 'bg-brand-gold text-brand-obsidian shadow-lg' : 'bg-white/5 text-white hover:bg-white/10'}`}
+                >
+                  Settings
+                </button>
             </div>
 
-            {view === 'create-post' ? (
+            {view === 'settings' && (
+                <form onSubmit={handleSaveSettings} className="glass-card p-12 rounded-[3rem] border border-white/10 space-y-8 max-w-3xl">
+                    <h3 className="text-2xl text-white font-regal italic">System Configuration</h3>
+                    
+                    <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Gemini API Key</label>
+                        <input 
+                            type="password"
+                            className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white focus:border-brand-gold outline-none" 
+                            placeholder="Enter API Key..." 
+                            value={apiKey} 
+                            onChange={e => setApiKey(e.target.value)} 
+                        />
+                        <p className="text-white/40 text-xs">Used for AI features. Stored securely.</p>
+                    </div>
+                    
+                    <button className="w-full bg-brand-gold text-brand-obsidian py-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-xl">
+                        Save Configuration
+                    </button>
+                </form>
+            )}
+
+            {view === 'create-post' && (
                 <form onSubmit={handlePost} className="glass-card p-12 rounded-[3rem] border border-white/10 space-y-8 max-w-3xl">
                     <h3 className="text-2xl text-white font-regal italic">New Transmission</h3>
                     
@@ -84,7 +131,10 @@ const AdminPanel: React.FC = () => {
                         Publish to Community
                     </button>
                 </form>
-            ) : (
+                </form>
+            )}
+            
+            {view === 'orders' && (
                 <div className="space-y-8">
                     <h3 className="text-2xl text-white font-regal italic">Pending Dispatches</h3>
                     {loadingInfo ? <p className="text-white/50">Loading...</p> : (
@@ -121,6 +171,7 @@ const AdminPanel: React.FC = () => {
                             ))}
                         </div>
                     )}
+                </div>
                 </div>
             )}
         </div>

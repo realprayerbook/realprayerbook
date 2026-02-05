@@ -4,11 +4,13 @@ import Quiz from './Quiz';
 
 interface DashboardProps {
   onJournalClick: () => void;
+  onCommunityClick: () => void;
+  onAdminClick: () => void;
   onLogout: () => void;
   children?: React.ReactNode;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onLogout, children }) => {
+const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick, onAdminClick, onLogout, children }) => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   return (
@@ -27,9 +29,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onLogout, childre
             <h2 className="text-white text-xl font-bold tracking-tight">Real Prayer</h2>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <a className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors" href="#">Library</a>
+            <a className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors cursor-pointer" onClick={() => {}}>Library</a>
             <button onClick={onJournalClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Journal</button>
-            <a className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors" href="#">Circles</a>
+            <button onClick={onCommunityClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Community</button>
+            <button onClick={onAdminClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Admin</button>
             {/* Inject dynamic links here (Community, Admin) */}
             {children}
           </nav>
