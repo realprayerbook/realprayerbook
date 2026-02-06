@@ -32,7 +32,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
             <a className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors cursor-pointer" onClick={() => {}}>Library</a>
             <button onClick={onJournalClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Journal</button>
             <button onClick={onCommunityClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Community</button>
-            <button onClick={onAdminClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Admin</button>
+            <button onClick={onCommunityClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Community</button>
             {/* Inject dynamic links here (Community, Admin) */}
             {children}
           </nav>

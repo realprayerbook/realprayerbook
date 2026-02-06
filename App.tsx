@@ -30,16 +30,62 @@ const App: React.FC = () => {
   const [view, setView] = useState<'landing' | 'dashboard' | 'journal' | 'auth' | 'community' | 'admin'>('landing');
   const [session, setSession] = useState<any>(null);
 
+  // Admin Guard
+  const ADMIN_EMAIL = 'louisenlp@gmail.com';
+
   useEffect(() => {
-    // Check active session
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash === '#login' || hash === '#auth') {
+        setView('auth');
+      } else if (hash === '#dashboard' && session) {
+        setView('dashboard');
+      } else if (hash === '#admin' && session) {
+        if (session.user.email === ADMIN_EMAIL) {
+          setView('admin');
+        } else {
+          setView('dashboard'); // Redirect unauthorized access to dashboard
+        }
+      } else if (hash === '#admin' || hash === '#dashboard') {
+         // If trying to access protected route without session, go into auth flow
+         if (!session) setView('auth');
+      } else {
+         // Default landing if no hash or unknown hash (and not already in a view)
+         if (view === 'landing' && !hash) return;
+         // Optional: Handle other cases or allow view state to persist
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    
+    // Initial check
+    handleHashChange();
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [session, view]); // Re-run if session changes to auto-redirect pending hashes
+
+  // Existing auth effect
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      // Trigger hash check logic again once session is loaded
+      if (window.location.hash === '#dashboard' && session) setView('dashboard');
+      if (window.location.hash === '#admin' && session && session.user.email === ADMIN_EMAIL) setView('admin');
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (_event === 'SIGNED_IN') {
+         // Check hash on sign in
+         const hash = window.location.hash;
+         if (hash === '#admin' && session?.user.email === ADMIN_EMAIL) setView('admin');
+         else if (hash === '#dashboard' || hash === '#auth' || hash === '#login') setView('dashboard');
+      } else if (_event === 'SIGNED_OUT') {
+         setView('landing');
+         // Clean hash? Optional.
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -102,6 +148,7 @@ const App: React.FC = () => {
     await supabase.auth.signOut();
     localStorage.removeItem('lead_captured');
     setView('landing');
+    window.history.pushState(null, '', ' '); // Clear hash
   };
 
   // Protected Route Check
@@ -109,12 +156,23 @@ const App: React.FC = () => {
       if (!session) {
           setView('auth');
       } else {
-          setView(targetView);
+         if (targetView === 'admin' && session.user.email !== ADMIN_EMAIL) {
+             alert('Access Denied: Admin Privileges Required');
+             return;
+         }
+         setView(targetView);
       }
   };
 
   if (view === 'auth') {
-      return <Auth onLogin={() => setView('dashboard')} />;
+      return <Auth onLogin={() => {
+          // Check if there was a pending hash state
+          if (window.location.hash === '#admin' && session?.user.email === ADMIN_EMAIL) {
+              setView('admin');
+          } else {
+              setView('dashboard');
+          }
+      }} />;
   }
 
   if (view === 'dashboard') {
@@ -124,7 +182,14 @@ const App: React.FC = () => {
             onCommunityClick={() => requireAuth('community')}
             onAdminClick={() => requireAuth('admin')} 
             onLogout={handleLogout} 
-        />
+        >
+           {/* Admin Link only visible if actual admin */}
+           {session?.user.email === ADMIN_EMAIL && (
+              <button onClick={() => requireAuth('admin')} className="text-brand-gold hover:text-white text-sm font-bold transition-colors animate-pulse">
+                  Admin Command
+              </button>
+           )}
+        </Dashboard>
     );
   }
 
