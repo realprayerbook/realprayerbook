@@ -31,7 +31,7 @@ const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
 
   // Admin Guard
-  const ADMIN_EMAIL = 'louisenlp@gmail.com';
+  const ADMIN_EMAILS = ['louisenlp@gmail.com', 'mike@dynamicmike.com'];
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -41,7 +41,7 @@ const App: React.FC = () => {
       } else if (hash === '#dashboard' && session) {
         setView('dashboard');
       } else if (hash === '#admin' && session) {
-        if (session.user.email === ADMIN_EMAIL) {
+        if (ADMIN_EMAILS.includes(session.user.email)) {
           setView('admin');
         } else {
           setView('dashboard'); // Redirect unauthorized access to dashboard
@@ -70,7 +70,7 @@ const App: React.FC = () => {
       setSession(session);
       // Trigger hash check logic again once session is loaded
       if (window.location.hash === '#dashboard' && session) setView('dashboard');
-      if (window.location.hash === '#admin' && session && session.user.email === ADMIN_EMAIL) setView('admin');
+      if (window.location.hash === '#admin' && session && ADMIN_EMAILS.includes(session.user.email)) setView('admin');
     });
 
     const {
@@ -80,7 +80,7 @@ const App: React.FC = () => {
       if (_event === 'SIGNED_IN') {
          // Check hash on sign in
          const hash = window.location.hash;
-         if (hash === '#admin' && session?.user.email === ADMIN_EMAIL) setView('admin');
+         if (hash === '#admin' && session && ADMIN_EMAILS.includes(session.user.email)) setView('admin');
          else if (hash === '#dashboard' || hash === '#auth' || hash === '#login') setView('dashboard');
       } else if (_event === 'SIGNED_OUT') {
          setView('landing');
@@ -156,7 +156,7 @@ const App: React.FC = () => {
       if (!session) {
           setView('auth');
       } else {
-         if (targetView === 'admin' && session.user.email !== ADMIN_EMAIL) {
+         if (targetView === 'admin' && !ADMIN_EMAILS.includes(session.user.email)) {
              alert('Access Denied: Admin Privileges Required');
              return;
          }
@@ -174,7 +174,7 @@ const App: React.FC = () => {
     switch (view) {
       case 'auth':
         return <Auth onLogin={() => {
-            if (window.location.hash === '#admin' && session?.user.email === ADMIN_EMAIL) {
+            if (window.location.hash === '#admin' && session && ADMIN_EMAILS.includes(session.user.email)) {
                 setView('admin');
             } else {
                 setView('dashboard');
@@ -189,7 +189,7 @@ const App: React.FC = () => {
                 onAdminClick={() => requireAuth('admin')} 
                 onLogout={handleLogout} 
             >
-               {session?.user.email === ADMIN_EMAIL && (
+               {session && ADMIN_EMAILS.includes(session.user.email) && (
                   <button onClick={() => requireAuth('admin')} className="text-brand-gold hover:text-white text-sm font-bold transition-colors animate-pulse">
                       Admin Command
                   </button>
