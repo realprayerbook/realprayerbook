@@ -36,6 +36,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
+      console.log('Hash changed:', hash, 'Session:', session);      
       if (hash === '#login' || hash === '#auth') {
         setView('auth');
       } else if (hash === '#dashboard' && session) {
