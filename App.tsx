@@ -26,30 +26,81 @@ if (typeof window !== 'undefined') {
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isLeadCaptureOpen, setIsLeadCaptureOpen] = useState(false); // Kept for potential future use or specific triggers
-  const [view, setView] = useState<'landing' | 'dashboard' | 'journal' | 'auth' | 'community' | 'admin'>('landing');
+  const [isLeadCaptureOpen, setIsLeadCaptureOpen] = useState(false); 
+  const [view, setView] = useState<'landing' | 'dashboard' | 'journal' | 'auth' | 'community' | 'admin' | 'membership_locked'>('landing');
   const [session, setSession] = useState<any>(null);
+  const [isCheckingMember, setIsCheckingMember] = useState(false);
 
   // Admin Guard
   const ADMIN_EMAILS = ['louisenlp@gmail.com', 'mike@dynamicmike.com'];
 
+  // Subdomain Detection Logic
   useEffect(() => {
-    const handleHashChange = () => {
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      const isSubdomain = hostname.startsWith('members.') || hostname.startsWith('app.') || hostname.includes('members.realprayerbook-eight');
+      
+      if (isSubdomain && view === 'landing') {
+        console.log('App: Subdomain detected. Defaulting to auth/member view.');
+        setView('auth');
+      }
+    }
+  }, []);
+
+  const checkMemberStatus = async (userEmail: string) => {
+    if (ADMIN_EMAILS.includes(userEmail)) return true;
+    
+    setIsCheckingMember(true);
+    try {
+      const { data, error } = await supabase
+        .from('shipping_requests')
+        .select('id')
+        .eq('friend_email', userEmail) // Check if they bought it as a gift
+        .or(`user_phone.eq.${userEmail}`); // Some older records might use phone or different fields, but let's stick to email first if possible
+      
+      // Secondary check for standard email field if it exists in your schema
+      const { data: data2 } = await supabase
+        .from('shipping_requests')
+        .select('id')
+        .eq('user_name', userEmail); // Using user_name if that's where email is stored in some variants
+
+      // Robust check across potential email fields
+      const { data: finalData } = await supabase
+        .from('shipping_requests')
+        .select('id')
+        .or(`friend_email.eq.${userEmail},user_name.eq.${userEmail}`); 
+
+      if (finalData && finalData.length > 0) {
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Error checking member status:', err);
+      return false;
+    } finally {
+      setIsCheckingMember(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleHashChange = async () => {
       const hash = window.location.hash;
       console.log('App: Hash changed to:', hash, 'Current session:', !!session);
-      if (hash === '#login' || hash === '#auth') {
+      
+      if (hash === '#login' || hash === '#auth' || hash === '#invite') {
         setView('auth');
       } else if (hash === '#dashboard' && session) {
-        setView('dashboard');
+        const isAuth = await checkMemberStatus(session.user.email);
+        if (isAuth) setView('dashboard');
+        else setView('membership_locked');
       } else if (hash === '#admin' && session) {
         if (ADMIN_EMAILS.includes(session.user.email)) {
           setView('admin');
         } else {
           setView('dashboard');
         }
-      } else if (hash === '#admin' || hash === '#dashboard') {
+      } else if (hash === '#admin' || hash === '#dashboard' || hash === '#community') {
          if (!session) {
-            console.log('App: Protected route with no session. Switching to auth.');
             setView('auth');
          }
       }
@@ -217,6 +268,35 @@ const App: React.FC = () => {
               </button>
               <AdminPanel />
             </div>
+        );
+
+      case 'membership_locked':
+        return (
+          <div className="min-h-screen bg-brand-obsidian flex items-center justify-center p-6 text-center">
+            <div className="max-w-xl glass-card p-12 rounded-[3rem] border-2 border-brand-magenta/30 shadow-[0_0_50px_rgba(255,0,128,0.2)]">
+              <span className="material-symbols-outlined text-brand-magenta text-6xl mb-8 animate-pulse">lock</span>
+              <h2 className="text-4xl font-regal text-white mb-6 font-black italic">Access Restricted</h2>
+              <p className="text-white/70 text-lg leading-relaxed mb-10">
+                A valid membership for <strong>{session?.user.email}</strong> was not found in our alignment records. 
+                <br /><br />
+                Please ensure you are using the same email address used during your Stripe checkout.
+              </p>
+              <div className="flex flex-col gap-4">
+                <button 
+                  onClick={() => { setView('landing'); setTimeout(() => document.getElementById('donate')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
+                  className="w-full py-5 bg-brand-gold text-brand-purple rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all"
+                >
+                  Go to Payment Area
+                </button>
+                <button 
+                  onClick={handleLogout}
+                  className="text-white/40 text-xs hover:text-white transition-colors underline"
+                >
+                  Sign in with a different email
+                </button>
+              </div>
+            </div>
+          </div>
         );
 
       default:

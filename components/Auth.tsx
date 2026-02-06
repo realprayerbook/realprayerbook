@@ -70,13 +70,17 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         <h2 className="text-4xl font-regal text-brand-gold text-center mb-2 italic font-black">
           {isLogin ? 'Member Login' : 'Join the Tribe'}
         </h2>
-        <p className="text-center text-white/60 mb-8 text-sm">Access the divine archives and live transmissions.</p>
+        <p className="text-center text-white/60 mb-8 text-sm">
+          {isLogin 
+            ? "Log in with the email address you used for your Stripe purchase." 
+            : "Set your password to access the divine archives."}
+        </p>
         
         {error && <div className="bg-red-500/20 text-red-200 p-4 rounded-xl mb-6 text-sm text-center border border-red-500/30">{error}</div>}
 
         <form onSubmit={handleAuth} className="space-y-6 relative z-10">
           <div>
-             <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Email Address</label>
+             <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Member Email</label>
              <input 
                type="email" 
                value={email}
@@ -108,7 +112,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         </form>
 
         <div className="mt-8 text-center space-y-4 relative z-10">
-           {window.location.search.includes('signup=true') && (
+           {(window.location.href.includes('invite=true') || window.location.href.includes('signup=true')) && (
              <button onClick={() => setIsLogin(!isLogin)} className="text-white/60 text-xs hover:text-brand-gold transition-colors tracking-wide">
                {isLogin ? "New here? Create an account" : "Already a member? Sign In"}
              </button>
@@ -119,6 +123,13 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                Forgot Password?
              </button>
            )}
+           
+           <div className="pt-6 border-t border-white/10">
+              <p className="text-white/20 text-[10px] uppercase tracking-widest leading-relaxed">
+                Paid but can't find your email? <br />
+                <a href="/#donate" className="text-brand-gold/50 hover:text-brand-gold transition-colors">Contact Support</a> or check your Stripe receipt.
+              </p>
+           </div>
         </div>
       </div>
     </div>
