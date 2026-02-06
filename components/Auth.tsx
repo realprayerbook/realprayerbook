@@ -108,9 +108,11 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         </form>
 
         <div className="mt-8 text-center space-y-4 relative z-10">
-           <button onClick={() => setIsLogin(!isLogin)} className="text-white/60 text-xs hover:text-brand-gold transition-colors tracking-wide">
-             {isLogin ? "New here? Create an account" : "Already a member? Sign In"}
-           </button>
+           {window.location.search.includes('signup=true') && (
+             <button onClick={() => setIsLogin(!isLogin)} className="text-white/60 text-xs hover:text-brand-gold transition-colors tracking-wide">
+               {isLogin ? "New here? Create an account" : "Already a member? Sign In"}
+             </button>
+           )}
            
            {isLogin && (
              <button onClick={handleResetPassword} className="block w-full text-white/30 text-[10px] hover:text-white uppercase tracking-widest">
