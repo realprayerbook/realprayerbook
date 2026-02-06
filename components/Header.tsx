@@ -25,6 +25,7 @@ const Header: React.FC<HeaderProps> = ({ onCtaClick }) => {
         <nav className="hidden lg:flex items-center gap-12">
            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/60 hover:text-white transition-colors uppercase tracking-[0.2em] text-xs font-bold">The Archive</button>
            <a href="#author" className="text-white/60 hover:text-white transition-colors uppercase tracking-[0.2em] text-xs font-bold">The Author</a>
+           <a href="#login" className="text-white/60 hover:text-white transition-colors uppercase tracking-[0.2em] text-xs font-bold border-l border-white/20 pl-12 ml-4">Login</a>
            <button 
              onClick={onCtaClick}
              className="px-8 py-3 bg-brand-gold text-brand-purple font-black uppercase tracking-[0.2em] text-xs rounded-full hover:bg-white hover:text-brand-obsidian transition-colors shadow-[0_0_30px_rgba(212,175,55,0.3)]"
@@ -48,6 +49,13 @@ const Header: React.FC<HeaderProps> = ({ onCtaClick }) => {
           >
             The Author
           </button>
+          <a 
+            href="#login" 
+            onClick={() => setIsMobileMenuOpen(false)} 
+            className="text-2xl font-regal text-brand-gold"
+          >
+            Member Login
+          </a>
           <button 
              onClick={() => { setIsMobileMenuOpen(false); onCtaClick(); }}
              className="px-10 py-4 bg-brand-gold text-brand-purple font-black uppercase tracking-[0.2em] text-sm rounded-full shadow-[0_0_30px_rgba(212,175,55,0.3)]"

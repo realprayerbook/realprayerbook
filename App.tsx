@@ -36,6 +36,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
+      console.log('App: Hash changed to:', hash, 'Current session:', !!session);
       if (hash === '#login' || hash === '#auth') {
         setView('auth');
       } else if (hash === '#dashboard' && session) {
@@ -44,15 +45,13 @@ const App: React.FC = () => {
         if (ADMIN_EMAILS.includes(session.user.email)) {
           setView('admin');
         } else {
-          setView('dashboard'); // Redirect unauthorized access to dashboard
+          setView('dashboard');
         }
       } else if (hash === '#admin' || hash === '#dashboard') {
-         // If trying to access protected route without session, go into auth flow
-         if (!session) setView('auth');
-      } else {
-         // Default landing if no hash or unknown hash (and not already in a view)
-         if (view === 'landing' && !hash) return;
-         // Optional: Handle other cases or allow view state to persist
+         if (!session) {
+            console.log('App: Protected route with no session. Switching to auth.');
+            setView('auth');
+         }
       }
     };
 
