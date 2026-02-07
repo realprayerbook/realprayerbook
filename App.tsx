@@ -134,24 +134,35 @@ const App: React.FC = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('App: Auth State Change:', _event, session?.user?.email);
       setSession(session);
-      if (_event === 'SIGNED_IN') {
-          // Check hash on sign in
-          const hash = window.location.hash;
-          if (hash.startsWith('#admin') && session && ADMIN_EMAILS.includes(session.user.email)) setView('admin');
-          else if (hash.startsWith('#dashboard') || hash.startsWith('#auth') || hash.startsWith('#login')) setView('dashboard');
-          else if (hash.includes('access_token')) {
-            // If we just landed from a magic link without a clear hash, default to dashboard
-            setView('dashboard');
+      
+      const hash = window.location.hash;
+      
+      // Handle login transitions (including magic links and initial sessions with tokens)
+      if (_event === 'SIGNED_IN' || _event === 'INITIAL_SESSION' || _event === 'USER_UPDATED') {
+          if (session) {
+              // If we land with a specific target hash, or if we have an access token (magic link)
+              if (hash.startsWith('#admin') && ADMIN_EMAILS.includes(session.user.email)) {
+                  setView('admin');
+              } else if (hash.startsWith('#dashboard') || hash.includes('access_token') || hash.includes('type=recovery')) {
+                  // Direct to dashboard for normal magic links or specific dashboard hash
+                  setView('dashboard');
+              } else if (view === 'auth' || (view === 'landing' && hash === '')) {
+                  // If we are currently on the auth screen or root landing and just signed in, 
+                  // we should probably go to the dashboard.
+                  // BUT only if we aren't explicitly trying to stay on landing (logged in landing is allowed)
+                  // For magic links, we almost ALWAYS want the dashboard.
+                  if (_event === 'SIGNED_IN') setView('dashboard');
+              }
           }
       } else if (_event === 'SIGNED_OUT') {
          setView('landing');
-         // Clean hash? Optional.
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [view]); // Add view to dependencies to ensure we have context for transitions
 
   useEffect(() => {
     if (isLoading || typeof window === 'undefined') return;
