@@ -43,8 +43,8 @@ export default async function handler(req, res) {
         subscription_data: {
             trial_period_days: 30, 
         },
-        success_url: `${req.headers.origin}/?payment_success=true`,
-        cancel_url: `${req.headers.origin}/?payment_cancelled=true`,
+        success_url: `https://members.realprayerbook.com/?payment_success=true`,
+        cancel_url: `https://realprayerbook.com/?payment_cancelled=true`,
     };
     
     // If email is provided, pre-fill it
