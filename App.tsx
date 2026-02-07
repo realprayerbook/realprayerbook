@@ -34,7 +34,9 @@ const App: React.FC = () => {
   // Admin Guard
   const ADMIN_EMAILS = ['louisenlp@gmail.com', 'mike@dynamicmike.com'];
 
-  // Subdomain Detection Logic
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+
+  // Subdomain Detection & PWA Logic
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
@@ -44,6 +46,12 @@ const App: React.FC = () => {
         console.log('App: Subdomain detected. Defaulting to auth/member view.');
         setView('auth');
       }
+
+      // PWA Install Prompt Listener
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        setInstallPrompt(e);
+      });
     }
   }, []);
 
@@ -218,6 +226,8 @@ const App: React.FC = () => {
       }
   };
 
+  const [isPrologueOpen, setIsPrologueOpen] = useState(false);
+
   // Defensive view resolution
   const renderView = () => {
     // If waiting for session on a protected route, show auth
@@ -383,8 +393,14 @@ const App: React.FC = () => {
     }
   };
 
-  // Moved hook usage inside component logic where appropriate, or keep here if global
-  const [isPrologueOpen, setIsPrologueOpen] = useState(false);
+  const handleInstallApp = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setInstallPrompt(null);
+    }
+  };
 
   return (
     <div className="min-h-screen relative overflow-x-hidden font-sans">
@@ -409,13 +425,15 @@ const App: React.FC = () => {
         
         {view === 'landing' && <Footer onCtaClick={handleOpenLeadCapture} />}
         
-        {view === 'landing' && (
+        {/* Floating PWA Install Button - Moved to Member View */}
+        {(view === 'dashboard' || view === 'admin' || view === 'journal') && (
           <div 
             className="fixed bottom-12 right-12 z-50 flex items-center gap-6 bg-brand-gold text-brand-purple px-10 py-5 rounded-full shadow-[0_0_60px_rgba(212,175,55,0.6)] hover:scale-110 transition-all cursor-pointer group gold-glow"
-            onClick={handleOpenLeadCapture}
+            onClick={installPrompt ? handleInstallApp : undefined}
+            style={{ display: installPrompt ? 'flex' : 'none' }}
           >
-            <span className="text-xs font-black uppercase tracking-[0.5em] hidden lg:block">Claim Your Divinity</span>
-            <span className="material-symbols-outlined text-3xl font-black">spa</span>
+            <span className="text-xs font-black uppercase tracking-[0.5em] hidden lg:block">Install App</span>
+            <span className="material-symbols-outlined text-3xl font-black">install_mobile</span>
           </div>
         )}
       </div>
