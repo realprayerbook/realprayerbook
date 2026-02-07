@@ -12,10 +12,12 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [useMagicLink, setUseMagicLink] = useState(false);
+  const isAdminView = window.location.hash === '#admin';
 
   React.useEffect(() => {
-    console.log('Auth Component Mounted. view set to auth.');
-  }, []);
+    console.log('Auth Component Mounted. isAdminView:', isAdminView);
+  }, [isAdminView]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +25,16 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     setError(null);
 
     try {
-      if (isLogin) {
+      if (useMagicLink) {
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: window.location.origin + '/#dashboard',
+          },
+        });
+        if (error) throw error;
+        alert('Magic link sent! Please check your email inbox to log in.');
+      } else if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password
@@ -36,8 +47,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           password
         });
         if (error) throw error;
-        alert('Registration successful! If email confirmation is enabled, please check your inbox.');
-        // Check if session was created immediately (some setups disable confirm)
+        alert('Registration successful! If email confirmation is enabled, please check your inbox to set your password.');
         const { data } = await supabase.auth.getSession();
         if (data.session) onLogin();
       }
@@ -68,19 +78,21 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         </div>
 
         <h2 className="text-4xl font-regal text-brand-gold text-center mb-2 italic font-black">
-          {isLogin ? 'Member Login' : 'Join the Tribe'}
+          {isAdminView ? 'Admin Portal' : (isLogin ? 'Member Login' : 'Join the Tribe')}
         </h2>
         <p className="text-center text-white/60 mb-8 text-sm">
-          {isLogin 
-            ? "Log in with the email address you used for your Stripe purchase." 
-            : "Set your password to access the divine archives."}
+          {isAdminView 
+            ? "Secure access for whitelisted captains only."
+            : (isLogin 
+                ? "Log in with the email address you used for your Stripe purchase." 
+                : "Set your password to access the divine archives.")}
         </p>
         
         {error && <div className="bg-red-500/20 text-red-200 p-4 rounded-xl mb-6 text-sm text-center border border-red-500/30">{error}</div>}
 
         <form onSubmit={handleAuth} className="space-y-6 relative z-10">
           <div>
-             <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Member Email</label>
+             <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Email Address</label>
              <input 
                type="email" 
                value={email}
@@ -90,35 +102,46 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
                required
              />
           </div>
-          <div>
-             <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Password</label>
-             <input 
-               type="password" 
-               value={password}
-               onChange={(e) => setPassword(e.target.value)}
-               className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20"
-               placeholder="••••••••"
-               required
-             />
-          </div>
+          
+          {!useMagicLink && (
+            <div>
+               <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Password</label>
+               <input 
+                 type="password" 
+                 value={password}
+                 onChange={(e) => setPassword(e.target.value)}
+                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20"
+                 placeholder="••••••••"
+                 required={!useMagicLink}
+               />
+            </div>
+          )}
 
           <button 
             type="submit" 
             disabled={loading}
             className="w-full bg-brand-gold text-brand-purple py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-lg hover:shadow-brand-gold/20"
           >
-            {loading ? 'Processing...' : (isLogin ? 'Enter Portal' : 'Create Account')}
+            {loading ? 'Processing...' : (useMagicLink ? 'Send Secure Link' : (isLogin ? 'Enter Portal' : 'Create Account'))}
+          </button>
+          
+          <button 
+            type="button"
+            onClick={() => setUseMagicLink(!useMagicLink)}
+            className="w-full text-white/40 text-[10px] uppercase tracking-[0.2em] hover:text-white transition-colors py-2"
+          >
+            {useMagicLink ? "Back to Password Login" : "Or Login with Secure Email Link"}
           </button>
         </form>
 
         <div className="mt-8 text-center space-y-4 relative z-10">
-           {(window.location.href.includes('invite=true') || window.location.href.includes('signup=true')) && (
+           {(window.location.href.includes('invite=true') || window.location.href.includes('signup=true')) && !isAdminView && (
              <button onClick={() => setIsLogin(!isLogin)} className="text-white/60 text-xs hover:text-brand-gold transition-colors tracking-wide">
                {isLogin ? "New here? Create an account" : "Already a member? Sign In"}
              </button>
            )}
            
-           {isLogin && (
+           {isLogin && !useMagicLink && (
              <button onClick={handleResetPassword} className="block w-full text-white/30 text-[10px] hover:text-white uppercase tracking-widest">
                Forgot Password?
              </button>
