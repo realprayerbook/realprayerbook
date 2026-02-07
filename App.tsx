@@ -89,17 +89,17 @@ const App: React.FC = () => {
       
       if (hash === '#login' || hash === '#auth' || hash === '#invite') {
         setView('auth');
-      } else if (hash === '#dashboard' && session) {
+      } else if (hash.startsWith('#dashboard') && session) {
         const isAuth = await checkMemberStatus(session.user.email);
         if (isAuth) setView('dashboard');
         else setView('membership_locked');
-      } else if (hash === '#admin' && session) {
+      } else if (hash.startsWith('#admin') && session) {
         if (ADMIN_EMAILS.includes(session.user.email)) {
           setView('admin');
         } else {
           setView('dashboard');
         }
-      } else if (hash === '#admin' || hash === '#dashboard' || hash === '#community') {
+      } else if (hash.startsWith('#admin') || hash.startsWith('#dashboard') || hash.startsWith('#community')) {
          if (!session) {
             setView('auth');
          }
@@ -128,10 +128,14 @@ const App: React.FC = () => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (_event === 'SIGNED_IN') {
-         // Check hash on sign in
-         const hash = window.location.hash;
-         if (hash === '#admin' && session && ADMIN_EMAILS.includes(session.user.email)) setView('admin');
-         else if (hash === '#dashboard' || hash === '#auth' || hash === '#login') setView('dashboard');
+          // Check hash on sign in
+          const hash = window.location.hash;
+          if (hash.startsWith('#admin') && session && ADMIN_EMAILS.includes(session.user.email)) setView('admin');
+          else if (hash.startsWith('#dashboard') || hash.startsWith('#auth') || hash.startsWith('#login')) setView('dashboard');
+          else if (hash.includes('access_token')) {
+            // If we just landed from a magic link without a clear hash, default to dashboard
+            setView('dashboard');
+          }
       } else if (_event === 'SIGNED_OUT') {
          setView('landing');
          // Clean hash? Optional.

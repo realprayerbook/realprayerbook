@@ -12,7 +12,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isAdminView = window.location.hash === '#admin';
+  const isAdminView = window.location.hash.startsWith('#admin');
   const [useMagicLink, setUseMagicLink] = useState(isAdminView); // Default to true for Admins
 
   React.useEffect(() => {
@@ -35,8 +35,8 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         const { error } = await supabase.auth.signInWithOtp({
           email: email.toLowerCase().trim(),
           options: {
-            // Ensure we redirect to the live domain, not localhost
-            emailRedirectTo: window.location.origin + '/#dashboard',
+            // Ensure we redirect to the correct section based on the current view
+            emailRedirectTo: window.location.origin + (isAdminView ? '/#admin' : '/#dashboard'),
           },
         });
         if (error) throw error;
