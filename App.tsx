@@ -351,7 +351,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="order-1 lg:order-2 relative reveal-section mt-12 lg:mt-0">
                   <div className="absolute -inset-10 border-4 border-brand-gold/20 rounded-[4rem] rotate-3 blur-md opacity-50 hidden lg:block"></div>
-                  <div className="flex flex-col lg:relative gap-8">
+                  <div className="flex flex-col gap-10">
                     <div className="relative rounded-[2.5rem] lg:rounded-[4rem] overflow-hidden aspect-[4/5.5] shadow-[0_0_120px_rgba(0,0,0,1)] border-4 border-white/20 group w-full">
                       <div 
                         className="absolute inset-0 bg-cover bg-center transition-all duration-1000 group-hover:scale-110" 
@@ -360,8 +360,8 @@ const App: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-brand-purple/95 via-transparent to-transparent hidden lg:block"></div>
                     </div>
                     
-                    {/* Award Box - Absolute on Desktop, Relative on Mobile */}
-                    <div className="relative lg:absolute lg:-bottom-6 lg:-left-6 lg:right-auto z-20 mt-4 lg:mt-0 w-full lg:w-[120%]">
+                    {/* Award Box - Stays UNDER the image as requested */}
+                    <div className="relative z-20 w-full lg:w-[110%] lg:-ml-12">
                       <div className="bg-brand-obsidian lg:bg-white/10 backdrop-blur-3xl px-8 py-8 lg:px-12 lg:py-10 rounded-3xl lg:rounded-[3rem] shadow-2xl border-2 border-white/20 lg:border-white/30 text-center lg:text-left">
                          <div className="flex items-center justify-center lg:justify-start gap-4 mb-4">
                            <span className="material-symbols-outlined text-brand-gold text-3xl lg:text-4xl drop-shadow-lg">verified</span>
