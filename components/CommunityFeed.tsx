@@ -64,7 +64,7 @@ const CommunityFeed: React.FC = () => {
                     <div className="text-white/80 leading-loose text-lg font-light whitespace-pre-wrap">{post.content}</div>
                     
                     <div className="mt-8 pt-8 border-t border-white/5 flex justify-between items-center text-xs text-brand-gold/60 uppercase tracking-widest font-bold">
-                        <span>Dr. Louise VDV</span>
+                        <span>Dr Louise VDV</span>
                         <span>{new Date(post.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                     </div>
                 </div>

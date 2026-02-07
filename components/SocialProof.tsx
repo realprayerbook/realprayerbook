@@ -3,7 +3,7 @@ import React from 'react';
 const SocialProof: React.FC = () => {
   const testimonials = [
     {
-      quote: "Real Prayer is one of the most profound and beautifully articulated explorations of the true power of prayer I have encountered. Dr. Louise doesn’t merely explain prayer—she lives it and in living it shares how it moves, shapes, and transforms our lives. Reading this book, I felt it offers exactly what the world needs right now: not a new concept of prayer, but a way to embody it.",
+      quote: "Real Prayer is one of the most profound and beautifully articulated explorations of the true power of prayer I have encountered. Dr Louise doesn’t merely explain prayer—she lives it and in living it shares how it moves, shapes, and transforms our lives. Reading this book, I felt it offers exactly what the world needs right now: not a new concept of prayer, but a way to embody it.",
       author: "Eleanora-Grace Heart",
       role: "Emotional Mastery Specialist & Author",
       img: "1"
