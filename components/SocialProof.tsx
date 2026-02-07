@@ -3,34 +3,22 @@ import React from 'react';
 const SocialProof: React.FC = () => {
   const testimonials = [
     {
-      quote: "A testament that this stuff, whether we believe it or not, is real.",
-      author: "John Vowels",
-      role: "Acknowledgment",
-      img: "1" // Placeholder, will use generic or need specific assets
+      quote: "Real Prayer is one of the most profound and beautifully articulated explorations of the true power of prayer I have encountered. Dr. Louise doesn’t merely explain prayer—she lives it and in living it shares how it moves, shapes, and transforms our lives. Reading this book, I felt it offers exactly what the world needs right now: not a new concept of prayer, but a way to embody it.",
+      author: "Eleanora-Grace Heart",
+      role: "Emotional Mastery Specialist & Author",
+      img: "1"
     },
     {
-      quote: "Learning truth wins and is never wrong.",
-      author: "Mr. Hennesy",
-      role: "Acknowledgment",
+      quote: "Real Prayer is not theory—it’s practice, and it works. Through Louise’s guidance, I learned how important it is to recognise and eliminate negative and destructive influences before they take hold. These practices gave me clarity, strength, and a grounded sense of protection that changed how I move through the world—personally and professionally.",
+      author: "Jon Callaway",
+      role: "Stuntman & Actor",
       img: "2"
     },
     {
-      quote: "Resonates on the same truth this book comes from. Flows with powerful codes.",
-      author: "Dr. Samuel Lee",
-      role: "Medical Professional",
+      quote: "I have known Louise for over ten years and witnessed what I can only describe as miracles unfolding within days. Through reading Real Prayer, I now understand more clearly how this happens. This book offers the strength and faith needed to carry people through profound challenges. It is an easy read, yet a powerful and practical tool.",
+      author: "Dr Lance Haggis OBE",
+      role: "World Charity Supporter",
       img: "3"
-    },
-    {
-      quote: "Living proof that prayers are answered.",
-      author: "Chloe & Jordan",
-      role: "The Living Proof",
-      img: "4"
-    },
-    {
-      quote: "Through the guidance of prayer... her crippling pain vanished.",
-      author: "Adele Mercer",
-      role: "The Author's Mother",
-      img: "5"
     }
   ];
 

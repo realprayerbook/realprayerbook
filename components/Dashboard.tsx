@@ -87,14 +87,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
                    Your complete guide to frequency alignment. Download the full manuscript to begin your study of the 22 Prayers.
                  </p>
                </div>
-               <a 
-                 href="/assets/RealPrayerBook..pdf" 
-                 download="RealPrayerBook_DrLouise.pdf"
-                 className="relative z-10 w-full bg-[#f4d125] text-[#1a1625] py-4 rounded-xl font-bold uppercase tracking-widest text-center shadow-lg hover:scale-[1.02] transition-transform flex items-center justify-center gap-3"
-               >
-                 <span className="material-symbols-outlined">download</span>
-                 Download PDF
-               </a>
+                <a 
+                  href="/assets/RealPrayerBook..pdf" 
+                  download="RealPrayerBook_DrLouise.pdf"
+                  className="relative z-10 w-full bg-brand-gold text-brand-purple py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-4 gold-glow"
+                >
+                  <span className="material-symbols-outlined text-2xl">download</span>
+                  Download Full Manuscript
+                </a>
             </div>
 
             {/* Quiz Card */}

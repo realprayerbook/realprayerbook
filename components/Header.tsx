@@ -10,9 +10,9 @@ const Header: React.FC<HeaderProps> = ({ onCtaClick }) => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 transition-all duration-300">
       <div className="max-w-7xl mx-auto flex justify-between items-center relative z-50">
-        <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-brand-gold text-3xl">spa</span>
-            <span className="font-regal text-xl lg:text-2xl text-brand-gold font-bold tracking-widest">REAL PRAYER</span>
+        <div className="flex items-center gap-2 lg:gap-3 shrink-0">
+            <span className="material-symbols-outlined text-brand-gold text-2xl lg:text-3xl">spa</span>
+            <span className="font-regal text-lg lg:text-2xl text-brand-gold font-bold tracking-widest whitespace-nowrap">REAL PRAYER</span>
         </div>
         
         <button 
