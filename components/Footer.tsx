@@ -13,8 +13,10 @@ const Footer: React.FC<FooterProps> = ({ onCtaClick }) => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-center md:text-left">
-            <h4 className="font-regal text-2xl text-white mb-2">Real Prayer</h4>
-            <p className="text-white/40 text-sm">© {new Date().getFullYear()} Dr. Louise Van der Velde. All rights reserved.</p>
+                <p className="text-white/40 text-[10px] lg:text-xs uppercase tracking-[0.2em] lg:tracking-[0.4em] font-black leading-relaxed">
+                    © {new Date().getFullYear()} Dr Louise VDV <br/>
+                    All Sacred Truths Reserved.
+                </p>
           </div>
           
           <div className="flex gap-6">

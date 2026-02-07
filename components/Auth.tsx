@@ -12,6 +12,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isResetMode, setIsResetMode] = useState(window.location.hash.startsWith('#reset-password'));
   const isAdminView = window.location.hash.startsWith('#admin');
   const [useMagicLink, setUseMagicLink] = useState(isAdminView); // Default to true for Admins
 
@@ -65,16 +66,34 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     }
   };
 
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      alert('Password updated successfully! You are now logged in.');
+      onLogin();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleResetPassword = async () => {
     if (!email) {
       setError('Please enter your email to reset password');
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/#reset-password'
+    });
     setLoading(false);
     if (error) setError(error.message);
-    else alert('Password reset link sent to ' + email);
+    else alert('Password reset link sent to ' + email + '. Clicking the link will return you here to set your new password.');
   };
 
   return (
@@ -93,42 +112,48 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             </div>
           )}
           <h2 className={`text-4xl font-regal text-center mb-2 italic font-black ${isAdminView ? 'text-white' : 'text-brand-gold'}`}>
-            {isAdminView ? 'Admin Command' : (isLogin ? 'Member Login' : 'Join the Tribe')}
+            {isResetMode ? 'Set Password' : (isAdminView ? 'Admin Command' : (isLogin ? 'Member Login' : 'Join the Tribe'))}
           </h2>
           <p className="text-center text-white/50 mb-10 text-sm leading-relaxed">
-            {isAdminView 
-              ? "Accessing the main override. Sign in with a secure one-time link."
-              : (isLogin 
-                  ? "Log in with the email address you used for your Stripe purchase." 
-                  : "Set your password to access the divine archives.")}
+            {isResetMode 
+              ? "Establish your new connection password."
+              : (isAdminView 
+                  ? "Accessing the main override. Sign in with a secure one-time link."
+                  : (isLogin 
+                      ? "Log in with the email address you used for your Stripe purchase." 
+                      : "Set your password to access the divine archives."))}
           </p>
         </div>
         
         {error && <div className="bg-red-500/20 text-red-200 p-4 rounded-xl mb-6 text-sm text-center border border-red-500/30">{error}</div>}
 
-        <form onSubmit={handleAuth} className="space-y-6 relative z-10">
-          <div>
-             <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Email Address</label>
-             <input 
-               type="email" 
-               value={email}
-               onChange={(e) => setEmail(e.target.value)}
-               className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20"
-               placeholder="seeker@example.com"
-               required
-             />
-          </div>
-          
-          {!useMagicLink && (
+        <form onSubmit={isResetMode ? handleUpdatePassword : handleAuth} className="space-y-6 relative z-10">
+          {!isResetMode && (
             <div>
-               <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Password</label>
+               <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">Email Address</label>
+               <input 
+                 type="email" 
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
+                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20"
+                 placeholder="seeker@example.com"
+                 required
+               />
+            </div>
+          )}
+          
+          {(isResetMode || !useMagicLink) && (
+            <div>
+               <label className="block text-[10px] uppercase tracking-[0.2em] text-brand-gold mb-2 font-bold">
+                 {isResetMode ? "New Password" : "Password"}
+               </label>
                <input 
                  type="password" 
                  value={password}
                  onChange={(e) => setPassword(e.target.value)}
                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-brand-gold outline-none transition-all placeholder:text-white/20"
                  placeholder="••••••••"
-                 required={!useMagicLink}
+                 required
                />
             </div>
           )}
@@ -138,16 +163,28 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             disabled={loading}
             className="w-full bg-brand-gold text-brand-purple py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-lg hover:shadow-brand-gold/20"
           >
-            {loading ? 'Processing...' : (useMagicLink ? 'Send Secure Link' : (isLogin ? 'Enter Portal' : 'Create Account'))}
+            {loading ? 'Processing...' : (isResetMode ? 'Update Password' : (useMagicLink ? 'Send Secure Link' : (isLogin ? 'Enter Portal' : 'Create Account')))}
           </button>
           
-          <button 
-            type="button"
-            onClick={() => setUseMagicLink(!useMagicLink)}
-            className="w-full text-white/40 text-[10px] uppercase tracking-[0.2em] hover:text-white transition-colors py-2"
-          >
-            {useMagicLink ? "Back to Password Login" : "Or Login with Secure Email Link"}
-          </button>
+          {!isResetMode && (
+            <button 
+              type="button"
+              onClick={() => setUseMagicLink(!useMagicLink)}
+              className="w-full text-white/40 text-[10px] uppercase tracking-[0.2em] hover:text-white transition-colors py-2"
+            >
+              {useMagicLink ? "Back to Password Login" : "Or Login with Secure Email Link"}
+            </button>
+          )}
+
+          {isResetMode && (
+            <button 
+              type="button"
+              onClick={() => { setIsResetMode(false); window.location.hash = '#auth'; }}
+              className="w-full text-white/40 text-[10px] uppercase tracking-[0.2em] hover:text-white transition-colors py-2"
+            >
+              Back to Login
+            </button>
+          )}
         </form>
 
         <div className="mt-8 text-center space-y-4 relative z-10">

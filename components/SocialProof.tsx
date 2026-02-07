@@ -6,19 +6,19 @@ const SocialProof: React.FC = () => {
       quote: "Real Prayer is one of the most profound and beautifully articulated explorations of the true power of prayer I have encountered. Dr Louise doesn’t merely explain prayer—she lives it and in living it shares how it moves, shapes, and transforms our lives. Reading this book, I felt it offers exactly what the world needs right now: not a new concept of prayer, but a way to embody it.",
       author: "Eleanora-Grace Heart",
       role: "Emotional Mastery Specialist & Author",
-      img: "1"
+      img: "/assets/eleanora.jpg"
     },
     {
       quote: "Real Prayer is not theory—it’s practice, and it works. Through Louise’s guidance, I learned how important it is to recognise and eliminate negative and destructive influences before they take hold. These practices gave me clarity, strength, and a grounded sense of protection that changed how I move through the world—personally and professionally.",
       author: "Jon Callaway",
       role: "Stuntman & Actor",
-      img: "2"
+      img: "/assets/jon.jpg"
     },
     {
       quote: "I have known Louise for over ten years and witnessed what I can only describe as miracles unfolding within days. Through reading Real Prayer, I now understand more clearly how this happens. This book offers the strength and faith needed to carry people through profound challenges. It is an easy read, yet a powerful and practical tool.",
       author: "Dr Lance Haggis OBE",
       role: "World Charity Supporter",
-      img: "3"
+      img: "/assets/lance.jpg"
     }
   ];
 
@@ -42,7 +42,7 @@ const SocialProof: React.FC = () => {
           {testimonials.map((t, i) => (
             <div key={i} className="masonry-item glass-card p-10 rounded-[2.5rem] group hover:border-brand-gold/80 transition-all duration-500 shadow-2xl border-2 border-white/10">
               <div className="flex items-center gap-5 mb-8">
-                <div className="size-16 rounded-full bg-cover border-2 border-brand-gold/40 shadow-xl" style={{ backgroundImage: `url('https://i.pravatar.cc/100?img=${t.img}')` }}></div>
+                <div className="size-16 rounded-full bg-cover border-2 border-brand-gold/40 shadow-xl" style={{ backgroundImage: `url('${t.img}')` }}></div>
                 <div>
                   <p className="font-regal text-xl font-black text-white tracking-tight">{t.author}</p>
                   <p className="text-[10px] text-brand-gold uppercase tracking-[0.4em] font-black mt-1">{t.role}</p>

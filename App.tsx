@@ -95,7 +95,7 @@ const App: React.FC = () => {
       const hash = window.location.hash;
       console.log('App: Hash changed to:', hash, 'Current session:', !!session);
       
-      if (hash === '#login' || hash === '#auth' || hash === '#invite') {
+      if (hash === '#login' || hash === '#auth' || hash === '#invite' || hash === '#reset-password') {
         setView('auth');
       } else if (hash.startsWith('#dashboard') && session) {
         const isAuth = await checkMemberStatus(session.user.email);
@@ -342,7 +342,7 @@ const App: React.FC = () => {
                     <span className="h-px w-16 bg-brand-gold"></span>
                     <span className="text-brand-gold font-black uppercase tracking-[0.6em] text-xs">The Visionary</span>
                   </div>
-                  <h2 className="text-6xl lg:text-7xl font-regal font-black leading-tight text-white drop-shadow-xl">Dr. Louise <br/><span className="text-brand-magenta">Van der Velde</span></h2>
+                  <h2 className="text-6xl lg:text-7xl font-regal font-black leading-tight text-white drop-shadow-xl">Dr Louise <br/><span className="text-brand-magenta">Van der Velde</span></h2>
                   <div className="space-y-10 text-white text-2xl leading-relaxed font-medium opacity-100 italic">
                     <p>Awarded the <strong>Outstanding Program Impact Award</strong>, I dedicated 25 years to the mechanics of frequency alignment.</p>
                     <p>Real prayer isn't a hope—it's a scientific command given to the unified field. This book is the archive you've been waiting for.</p>
