@@ -35,7 +35,11 @@ const DailySignal: React.FC = () => {
         const start = new Date(now.getFullYear(), 0, 0);
         const diff = (now.getTime() - start.getTime()) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
         const oneDay = 1000 * 60 * 60 * 24;
-        const dayOfYear = Math.floor(diff / oneDay);
+        const dayOfYearRaw = Math.floor(diff / oneDay);
+        
+        // Ensure we loop correctly if day exceeds archive count (e.g. leap years or custom offsets)
+        // We have 370 days of content.
+        const dayOfYear = ((dayOfYearRaw - 1) % 370) + 1;
 
         const data = await getDailyMessage(dayOfYear);
         

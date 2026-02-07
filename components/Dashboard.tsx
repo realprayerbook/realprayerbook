@@ -7,13 +7,14 @@ import { getPosts, recordVisit, getWeeklyVisits } from '../utils/db';
 interface DashboardProps {
   onJournalClick: () => void;
   onCommunityClick: () => void;
+  onLibraryClick: () => void;
   onAdminClick: () => void;
   onLogout: () => void;
   isAdmin?: boolean;
   children?: React.ReactNode;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick, onAdminClick, onLogout, isAdmin, children }) => {
+const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick, onLibraryClick, onAdminClick, onLogout, isAdmin, children }) => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [latestPost, setLatestPost] = useState<any>(null);
   const [visits, setVisits] = useState<string[]>([]);
@@ -54,11 +55,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
             <h2 className="text-white text-xl font-bold tracking-tight">Real Prayer</h2>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <a className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors cursor-pointer" onClick={() => {}}>Library</a>
+            <button onClick={onLibraryClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors cursor-pointer">Library</button>
             <button onClick={onJournalClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Journal</button>
             <button onClick={onCommunityClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Community</button>
-            <button onClick={onCommunityClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Community</button>
-            {/* Inject dynamic links here (Community, Admin) */}
+            {/* Inject dynamic links here (Admin) */}
             {children}
           </nav>
         </div>

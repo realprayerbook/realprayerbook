@@ -18,6 +18,7 @@ import Journal from './components/Journal';
 import PrologueModal from './components/PrologueModal';
 import Auth from './components/Auth';
 import CommunityFeed from './components/CommunityFeed';
+import LibraryExplorer from './components/LibraryExplorer';
 import AdminPanel from './components/AdminPanel';
 
 if (typeof window !== 'undefined') {
@@ -27,7 +28,7 @@ if (typeof window !== 'undefined') {
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLeadCaptureOpen, setIsLeadCaptureOpen] = useState(false); 
-  const [view, setView] = useState<'landing' | 'dashboard' | 'journal' | 'auth' | 'community' | 'admin' | 'membership_locked'>('landing');
+  const [view, setView] = useState<'landing' | 'dashboard' | 'journal' | 'auth' | 'community' | 'admin' | 'membership_locked' | 'library'>('landing');
   const [session, setSession] = useState<any>(null);
   const [isCheckingMember, setIsCheckingMember] = useState(false);
 
@@ -261,6 +262,7 @@ const App: React.FC = () => {
             <Dashboard 
                 onJournalClick={() => setView('journal')} 
                 onCommunityClick={() => requireAuth('community')}
+                onLibraryClick={() => setView('library')}
                 onAdminClick={() => requireAuth('admin')} 
                 onLogout={handleLogout} 
                 isAdmin={session && ADMIN_EMAILS.includes(session.user.email)}
@@ -288,6 +290,11 @@ const App: React.FC = () => {
               </button>
               <CommunityFeed />
             </div>
+        );
+
+      case 'library':
+        return (
+            <LibraryExplorer onBack={() => setView('dashboard')} />
         );
 
       case 'admin':
