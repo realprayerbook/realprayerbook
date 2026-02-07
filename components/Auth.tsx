@@ -27,10 +27,15 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
     try {
       if (useMagicLink) {
+        const ADMIN_EMAILS = ['louisenlp@gmail.com', 'mike@dynamicmike.com'];
+        if (isAdminView && !ADMIN_EMAILS.includes(email.toLowerCase().trim())) {
+          throw new Error('Access Denied: This email is not on the authorized list.');
+        }
+
         const { error } = await supabase.auth.signInWithOtp({
-          email,
+          email: email.toLowerCase().trim(),
           options: {
-            // Use current host for redirect to support both domains and subdomains
+            // Ensure we redirect to the live domain, not localhost
             emailRedirectTo: window.location.origin + '/#dashboard',
           },
         });
