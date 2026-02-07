@@ -12,11 +12,12 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [useMagicLink, setUseMagicLink] = useState(false);
   const isAdminView = window.location.hash === '#admin';
+  const [useMagicLink, setUseMagicLink] = useState(isAdminView); // Default to true for Admins
 
   React.useEffect(() => {
     console.log('Auth Component Mounted. isAdminView:', isAdminView);
+    if (isAdminView) setUseMagicLink(true);
   }, [isAdminView]);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -29,11 +30,12 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
+            // Use current host for redirect to support both domains and subdomains
             emailRedirectTo: window.location.origin + '/#dashboard',
           },
         });
         if (error) throw error;
-        alert('Magic link sent! Please check your email inbox to log in.');
+        alert('Secure magic link sent! Please check your email inbox to log in.');
       } else if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -71,22 +73,31 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-brand-obsidian flex items-center justify-center p-6 bg-[url('/assets/noise.png')] opacity-100">
-      <div className="max-w-md w-full glass-card p-10 rounded-[2.5rem] border border-white/20 shadow-2xl relative overflow-hidden">
+    <div className={`min-h-screen ${isAdminView ? 'bg-black' : 'bg-brand-obsidian'} flex items-center justify-center p-6 bg-[url('/assets/noise.png')] opacity-100 transition-colors duration-1000`}>
+      <div className={`max-w-md w-full glass-card p-10 rounded-[2.5rem] border ${isAdminView ? 'border-brand-gold/40 shadow-[0_0_50px_rgba(212,175,55,0.1)]' : 'border-white/20 shadow-2xl'} relative overflow-hidden transition-all duration-1000`}>
         <div className="absolute top-0 right-0 p-10 opacity-20 pointer-events-none">
-             <span className="material-symbols-outlined text-9xl text-brand-gold">spa</span>
+             <span className={`material-symbols-outlined text-9xl ${isAdminView ? 'text-white/20' : 'text-brand-gold'}`}>spa</span>
         </div>
 
-        <h2 className="text-4xl font-regal text-brand-gold text-center mb-2 italic font-black">
-          {isAdminView ? 'Admin Portal' : (isLogin ? 'Member Login' : 'Join the Tribe')}
-        </h2>
-        <p className="text-center text-white/60 mb-8 text-sm">
-          {isAdminView 
-            ? "Secure access for whitelisted captains only."
-            : (isLogin 
-                ? "Log in with the email address you used for your Stripe purchase." 
-                : "Set your password to access the divine archives.")}
-        </p>
+        <div className="relative z-10">
+          {isAdminView && (
+            <div className="flex justify-center mb-6">
+               <div className="px-4 py-1 rounded-full border border-brand-gold/30 bg-brand-gold/10 text-brand-gold text-[10px] font-black uppercase tracking-[0.4em]">
+                 Restricted Access
+               </div>
+            </div>
+          )}
+          <h2 className={`text-4xl font-regal text-center mb-2 italic font-black ${isAdminView ? 'text-white' : 'text-brand-gold'}`}>
+            {isAdminView ? 'Admin Command' : (isLogin ? 'Member Login' : 'Join the Tribe')}
+          </h2>
+          <p className="text-center text-white/50 mb-10 text-sm leading-relaxed">
+            {isAdminView 
+              ? "Accessing the main override. Sign in with a secure one-time link."
+              : (isLogin 
+                  ? "Log in with the email address you used for your Stripe purchase." 
+                  : "Set your password to access the divine archives.")}
+          </p>
+        </div>
         
         {error && <div className="bg-red-500/20 text-red-200 p-4 rounded-xl mb-6 text-sm text-center border border-red-500/30">{error}</div>}
 
