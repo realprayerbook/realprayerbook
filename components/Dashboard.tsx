@@ -1,32 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DailySignal from './DailySignal'; // New Component
 import Quiz from './Quiz';
-import { getPosts } from '../utils/db';
+import WeeklyTracker from './WeeklyTracker';
+import { getPosts, recordVisit, getWeeklyVisits } from '../utils/db';
 
 interface DashboardProps {
   onJournalClick: () => void;
   onCommunityClick: () => void;
   onAdminClick: () => void;
   onLogout: () => void;
+  isAdmin?: boolean;
   children?: React.ReactNode;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick, onAdminClick, onLogout, children }) => {
+const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick, onAdminClick, onLogout, isAdmin, children }) => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [latestPost, setLatestPost] = useState<any>(null);
+  const [visits, setVisits] = useState<string[]>([]);
 
-  React.useEffect(() => {
-    const fetchLatest = async () => {
+  useEffect(() => {
+    const initDashboard = async () => {
       try {
-        const posts = await getPosts();
-        if (posts && posts.length > 0) {
-          setLatestPost(posts[0]);
+        await recordVisit();
+        const [postsData, visitsData] = await Promise.all([
+          getPosts(),
+          getWeeklyVisits()
+        ]);
+        
+        if (postsData && postsData.length > 0) {
+          setLatestPost(postsData[0]);
         }
+        setVisits(visitsData);
       } catch (err) {
-        console.error('Error fetching latest transmission:', err);
+        console.error('Error initializing dashboard:', err);
       }
     };
-    fetchLatest();
+    initDashboard();
   }, []);
 
   return (
@@ -82,8 +91,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
               ></iframe>
           </div>
 
+          {/* Weekly Engagement Tracker */}
+          <WeeklyTracker visits={visits} />
+
           {/* Daily Coherence Signal */}
-          <DailySignal />
+          <DailySignal isAdmin={isAdmin} onAdminClick={onAdminClick} />
 
           {/* Latest Transmission Section */}
           {latestPost && (

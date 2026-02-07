@@ -1,88 +1,107 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { generateDailySignal } from '../utils/ai';
+import { getDailyMessage } from '../utils/db';
 
 const DailySignal: React.FC = () => {
-    const [signal, setSignal] = useState<string | null>(null);
+    const [signal, setSignal] = useState<{ title: string; insight: string; command: string; seal: string } | null>(null);
     const [loading, setLoading] = useState(false);
     const [revealed, setRevealed] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Check local storage for today's signal to avoid re-generating
-        const savedSignal = localStorage.getItem('daily_signal');
+        // Automatically check for a revealed signal in local storage for today
         const savedDate = localStorage.getItem('daily_signal_date');
-        const today = new Date().toDateString();
-
-        if (savedSignal && savedDate === today) {
-            setSignal(savedSignal);
-            setLoading(false);
+        const todayStr = new Date().toDateString();
+        
+        if (savedDate === todayStr) {
+            const savedSignal = localStorage.getItem('daily_signal');
+            if (savedSignal) {
+                try {
+                    setSignal(JSON.parse(savedSignal));
+                    setRevealed(true);
+                } catch (e) {
+                    console.error('Error parsing saved signal:', e);
+                }
+            }
         }
     }, []);
 
     const handleReveal = async () => {
-        if (signal) {
-            animateReveal();
-            return;
-        }
-
         setLoading(true);
-        const generated = await generateDailySignal();
         
-        if (generated) {
-            setSignal(generated);
-            localStorage.setItem('daily_signal', generated);
+        // Calculate day of year (1-366)
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = (now.getTime() - start.getTime()) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
+
+        const data = await getDailyMessage(dayOfYear);
+        
+        if (data) {
+            setSignal(data);
+            localStorage.setItem('daily_signal', JSON.stringify(data));
             localStorage.setItem('daily_signal_date', new Date().toDateString());
             setLoading(false);
             animateReveal();
         } else {
-            // Fallback if API fails or no key
             setLoading(false);
-            alert("The frequency is quiet today. Please ensure the API Key is configured in settings.");
+            // Fallback for missing data
+            setSignal({
+                title: "Stillness",
+                insight: "The archive is tuning into your unique frequency.",
+                command: "Command your day with your own sovereign will.",
+                seal: "You are the creator. And so it is done."
+            });
+            animateReveal();
         }
     };
 
     const animateReveal = () => {
-         setRevealed(true);
-         gsap.fromTo(contentRef.current, 
-            { opacity: 0, y: 20, scale: 0.95 },
-            { opacity: 1, y: 0, scale: 1, duration: 1.5, ease: "power3.out", delay: 0.2 }
-         );
-    };
-
-    // Parse the signal for nice formatting if it follows the structure
-    // We expect "The Insight:", "The Command:", "The Seal:" keys or similar.
-    // Simple parser to bold the keys
-    const formatSignal = (text: string) => {
-        return text.split('\n').map((line, i) => {
-            if (line.includes(':')) {
-                const parts = line.split(':');
-                if (parts.length > 1 && (line.startsWith('The Insight') || line.startsWith('The Command') || line.startsWith('The Seal') || line.startsWith('Theme'))) {
-                    return <p key={i} className="mb-4"><strong className="text-brand-gold uppercase tracking-widest text-xs block mb-1">{parts[0]}</strong> <span className="text-white/90">{parts.slice(1).join(':')}</span></p>;
-                }
+        setRevealed(true);
+        setTimeout(() => {
+            if (contentRef.current) {
+                gsap.fromTo(contentRef.current, 
+                    { opacity: 0, y: 30, filter: 'blur(10px)' },
+                    { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'power4.out' }
+                );
             }
-            return <p key={i} className="mb-2 text-white/80">{line}</p>;
-        });
+        }, 100);
     };
 
     if (revealed && signal) {
         return (
-            <div ref={contentRef} className="glass-card p-8 md:p-12 rounded-[3rem] border border-brand-gold/20 shadow-[0_0_60px_rgba(212,175,55,0.15)] relative overflow-hidden mb-12">
-                <div className="absolute top-0 right-0 p-6 opacity-20">
-                     <span className="material-symbols-outlined text-8xl text-brand-gold">spa</span>
-                </div>
-                
-                <h3 className="text-2xl font-regal text-white font-black italic mb-2">Daily Coherence Signal</h3>
-                <p className="text-[10px] text-brand-gold uppercase tracking-[0.3em] mb-8">Your Morning Instruction for Earth School</p>
+            <div ref={contentRef} className="glass-card relative border border-white/10 p-12 lg:p-24 rounded-[4rem] bg-brand-obsidian/40 backdrop-blur-3xl space-y-16 overflow-hidden w-full mb-12">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 size-64 bg-brand-magenta/10 blur-[100px] -mr-32 -mt-32 rounded-full"></div>
+                <div className="absolute bottom-0 left-0 size-64 bg-brand-gold/10 blur-[100px] -ml-32 -mb-32 rounded-full"></div>
 
-                <div className="prose prose-invert prose-lg max-w-none font-light leading-relaxed">
-                    {formatSignal(signal)}
+                <div className="space-y-6 text-center">
+                    <span className="text-xs uppercase tracking-[0.4em] text-brand-gold font-bold">{signal.title}</span>
+                    <div className="h-px w-24 bg-brand-gold mx-auto opacity-30"></div>
                 </div>
 
-                <div className="mt-8 pt-8 border-t border-white/10 flex justify-between items-end">
-                    <p className="text-[10px] text-white/30 uppercase tracking-widest">Read aloud to command frequency</p>
-                    <span className="material-symbols-outlined text-brand-gold/50">graphic_eq</span>
+                <div className="text-center">
+                    <h3 className="text-2xl lg:text-4xl text-white font-newsreader italic leading-relaxed max-w-2xl mx-auto">
+                        "{signal.insight}"
+                    </h3>
+                </div>
+
+                <div className="space-y-8 text-center">
+                    <div className="inline-flex items-center gap-4 px-6 py-2 rounded-full bg-white/5 border border-white/10">
+                        <span className="size-2 rounded-full bg-brand-magenta"></span>
+                        <span className="text-[10px] uppercase tracking-widest text-white/60 font-black">Today's Sacred Command</span>
+                    </div>
+                    <p className="text-3xl lg:text-5xl text-brand-gold font-regal font-light tracking-wide italic">
+                        {signal.command}
+                    </p>
+                </div>
+
+                <div className="pt-12 text-center">
+                    <p className="text-white/40 text-[10px] uppercase tracking-[0.4em] font-black italic">
+                        {signal.seal}
+                    </p>
                 </div>
             </div>
         );

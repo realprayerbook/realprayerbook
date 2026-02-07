@@ -87,25 +87,55 @@ const AdminPanel: React.FC = () => {
             </div>
 
             {view === 'settings' && (
-                <form onSubmit={handleSaveSettings} className="glass-card p-12 rounded-[3rem] border border-white/10 space-y-8 max-w-3xl">
-                    <h3 className="text-2xl text-white font-regal italic">System Configuration</h3>
-                    
-                    <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Gemini API Key</label>
-                        <input 
-                            type="password"
-                            className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white focus:border-brand-gold outline-none" 
-                            placeholder="Enter API Key..." 
-                            value={apiKey} 
-                            onChange={e => setApiKey(e.target.value)} 
-                        />
-                        <p className="text-white/40 text-xs">Used for AI features. Stored securely.</p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <form onSubmit={handleSaveSettings} className="glass-card p-12 rounded-[3rem] border border-white/10 space-y-8">
+                        <h3 className="text-2xl text-white font-regal italic">System Configuration</h3>
+                        
+                        <div className="space-y-2">
+                            <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Gemini API Key</label>
+                            <input 
+                                type="password"
+                                className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white focus:border-brand-gold outline-none" 
+                                placeholder="Enter API Key..." 
+                                value={apiKey} 
+                                onChange={e => setApiKey(e.target.value)} 
+                            />
+                            <p className="text-white/40 text-xs">Used for AI features. Stored securely.</p>
+                        </div>
+                        
+                        <button className="w-full bg-brand-gold text-brand-obsidian py-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-xl">
+                            Save Configuration
+                        </button>
+                    </form>
+
+                    <div className="space-y-8 animate-in slide-in-from-right duration-700">
+                        <div className="flex items-center gap-4 mb-4">
+                            <span className="material-symbols-outlined text-brand-gold">info</span>
+                            <span className="text-white/40 uppercase tracking-[0.4em] text-[10px] font-black">Setup Instructions</span>
+                        </div>
+
+                        <div className="space-y-6 text-white/70 leading-relaxed text-sm">
+                            <p>To enable the **Daily Coherence Signal** for your members, you need to configure the Gemini AI Key.</p>
+                            
+                            <div className="p-6 bg-white/5 rounded-2xl border border-white/10 space-y-4">
+                                <div className="flex gap-4">
+                                    <span className="size-6 rounded-full bg-brand-gold text-brand-obsidian flex items-center justify-center font-bold text-xs">1</span>
+                                    <p>Visit **[Google AI Studio](https://aistudio.google.com/app/apikey)** (Free).</p>
+                                </div>
+                                <div className="flex gap-4">
+                                    <span className="size-6 rounded-full bg-brand-gold text-brand-obsidian flex items-center justify-center font-bold text-xs">2</span>
+                                    <p>Click **"Create API key"** and copy the code.</p>
+                                </div>
+                                <div className="flex gap-4">
+                                    <span className="size-6 rounded-full bg-brand-gold text-brand-obsidian flex items-center justify-center font-bold text-xs">3</span>
+                                    <p>Paste the code into the input field here and click **Save**.</p>
+                                </div>
+                            </div>
+
+                            <p className="text-brand-gold font-medium italic">"The digital world is a reflection of your command. Set your key to unlock the transmission."</p>
+                        </div>
                     </div>
-                    
-                    <button className="w-full bg-brand-gold text-brand-obsidian py-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-xl">
-                        Save Configuration
-                    </button>
-                </form>
+                </div>
             )}
 
             {view === 'create-post' && (

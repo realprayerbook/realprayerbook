@@ -1,10 +1,75 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { saveJournalEntry, getTodayJournalEntry, JournalEntry } from '../utils/db';
 
 interface JournalProps {
   onBack: () => void;
+  onCommunityClick: () => void;
+  onPracticesClick: () => void;
 }
 
-const Journal: React.FC<JournalProps> = ({ onBack }) => {
+const Journal: React.FC<JournalProps> = ({ onBack, onCommunityClick, onPracticesClick }) => {
+  const [content, setContent] = useState('');
+  const [frequency, setFrequency] = useState(75);
+  const [tags, setTags] = useState<string[]>(['Gratitude']);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isPromptEnabled, setIsPromptEnabled] = useState(true);
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  useEffect(() => {
+    const loadEntry = async () => {
+      try {
+        const dateStr = selectedDate.toISOString().split('T')[0];
+        const entry = await getTodayJournalEntry(dateStr);
+        if (entry) {
+          setContent(entry.content);
+          setFrequency(entry.frequency);
+          setTags(entry.tags || []);
+        } else {
+          setContent('');
+          setFrequency(75);
+          setTags(['Gratitude']);
+        }
+      } catch (err) {
+        console.error('Error loading entry:', err);
+      }
+    };
+    loadEntry();
+  }, [selectedDate]);
+
+  const handleSave = async () => {
+    if (!content.trim()) return;
+    setIsSaving(true);
+    try {
+      await saveJournalEntry({
+        content,
+        frequency,
+        prompt: isPromptEnabled ? "How did today's Earth School lesson on 'Expansion' shift your perspective?" : undefined,
+        tags,
+        created_at: selectedDate.toISOString() // Use selectedDate for saving
+      });
+      alert('Your wisdom has been archived for the journey ahead.');
+    } catch (err) {
+      alert('Error saving to the archive. Please check your connection.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const toggleTag = (tag: string) => {
+    if (tags.includes(tag)) {
+      setTags(tags.filter(t => t !== tag));
+    } else {
+      setTags([...tags, tag]);
+    }
+  };
+
+  const displayDate = selectedDate.toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+
   return (
     <div className="bg-[#221015] min-h-screen text-white font-newsreader flex flex-col">
       <header className="flex items-center justify-between border-b border-[#48232c] px-10 py-4 bg-[#221015] sticky top-0 z-50">
@@ -18,8 +83,8 @@ const Journal: React.FC<JournalProps> = ({ onBack }) => {
           <div className="hidden lg:flex gap-9 text-white/70 text-sm font-medium">
             <button onClick={onBack} className="hover:text-white transition-colors">Dashboard</button>
             <span className="text-white border-b-2 border-[#f1275a]">Journals</span>
-            <a className="hover:text-white transition-colors" href="#">Practices</a>
-            <a className="hover:text-white transition-colors" href="#">Community</a>
+            <button onClick={onPracticesClick} className="hover:text-white transition-colors">Practices</button>
+            <button onClick={onCommunityClick} className="hover:text-white transition-colors">Community</button>
           </div>
           <div className="flex gap-2">
             <button className="flex items-center justify-center rounded-xl h-10 w-10 bg-[#48232c] text-white">
@@ -29,20 +94,34 @@ const Journal: React.FC<JournalProps> = ({ onBack }) => {
               <span className="material-symbols-outlined">settings</span>
             </button>
           </div>
-          <div className="size-10 rounded-full border border-[#f1275a]/30 overflow-hidden">
-            <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAi1FSV7GmVwY-5W3JDb-RGGZ8iwIjP-M1MIM5Ifss571VNISB6oo0tTAqPuUn58trzesMAHxlbOjbSWxcJmxBF-Cy1Uzc_AKFIGiVr-WAVI0TVltwY7sOUDBpbmoQjYRNu6DeGX9eQIPfiOg1nk4TTjQ0ml8HnzHJspZqCQcItHHbcKbn2ipMHfxeHtmfLjK1VI-wjvujz3CSRT5E1FaFZrRhh_TMRviFRKjpBedkx0vVwyI_cGKrl-B0TM0VSUqumEQl4ib7YPP8" alt="Profile" />
+          <div className="size-10 rounded-full border border-[#f1275a]/30 overflow-hidden bg-brand-obsidian flex items-center justify-center">
+             <span className="material-symbols-outlined text-white/40">person</span>
           </div>
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto bg-gradient-to-b from-[#221015] to-[#30161d] p-8">
         <div className="max-w-3xl mx-auto flex flex-col gap-8">
-          {/* Breadcrumbs */}
-          <div className="flex items-center gap-2 text-[#ca919f] text-sm font-medium">
-            <button onClick={onBack} className="hover:text-white transition-colors">Journal</button>
-            <span className="material-symbols-outlined text-xs">chevron_right</span>
-            <span className="text-white">New Entry</span>
-            <span className="ml-auto italic opacity-60">October 24, 2025</span>
+          {/* Breadcrumbs & Date Display */}
+          <div className="flex items-center justify-between text-[#ca919f] text-sm font-medium">
+            <div className="flex items-center gap-2">
+                <button onClick={onBack} className="hover:text-white transition-colors">Journal</button>
+                <span className="material-symbols-outlined text-xs">chevron_right</span>
+                <span className="text-white">New Entry</span>
+            </div>
+            
+            <div className="relative group">
+                <div className="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
+                    <span className="material-symbols-outlined text-sm">calendar_month</span>
+                    <span className="italic">{displayDate}</span>
+                </div>
+                <input 
+                    type="date"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    value={selectedDate.toISOString().split('T')[0]}
+                    onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                />
+            </div>
           </div>
 
           {/* Prompt Panel */}
@@ -54,9 +133,15 @@ const Journal: React.FC<JournalProps> = ({ onBack }) => {
               </div>
               <p className="text-[#ca919f] text-base font-normal italic">"How did today's Earth School lesson on 'Expansion' shift your perspective?"</p>
             </div>
-            <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#48232c] p-0.5 has-[:checked]:bg-[#f1275a] transition-colors">
-              <div className="h-full w-[27px] rounded-full bg-white shadow-md transform transition-transform translate-x-0 peer-checked:translate-x-full"></div>
-              <input defaultChecked className="hidden peer" type="checkbox"/>
+            <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#48232c] p-0.5 transition-colors"
+                style={{ backgroundColor: isPromptEnabled ? '#f1275a' : '#48232c' }}>
+              <input 
+                checked={isPromptEnabled} 
+                onChange={() => setIsPromptEnabled(!isPromptEnabled)}
+                className="hidden" 
+                type="checkbox"
+              />
+              <div className={`h-full w-[27px] rounded-full bg-white shadow-md transform transition-transform ${isPromptEnabled ? 'translate-x-full' : 'translate-x-0'}`}></div>
             </label>
           </div>
 
@@ -74,27 +159,50 @@ const Journal: React.FC<JournalProps> = ({ onBack }) => {
                 <span className="text-[#d4af37]">Current State</span>
                 <span>Coherent</span>
               </div>
-              <input className="frequency-slider w-full" max="100" min="0" type="range" defaultValue="75"/>
-              <p className="text-center text-sm text-[#d4af37]/80 italic font-medium">Resonating at 75Hz - Expanding</p>
+              <input 
+                className="frequency-slider w-full" 
+                max="100" min="0" 
+                type="range" 
+                value={frequency}
+                onChange={(e) => setFrequency(parseInt(e.target.value))}
+              />
+              <p className="text-center text-sm text-[#d4af37]/80 italic font-medium">Resonating at {frequency}Hz - {frequency > 50 ? 'Expanding' : 'Compressing'}</p>
             </div>
 
             <textarea 
               className="w-full min-h-[400px] bg-transparent border-none focus:ring-0 text-2xl leading-relaxed text-white/90 placeholder:text-white/20 italic font-newsreader resize-none"
               placeholder="Quiet your mind and record your insights here..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
             ></textarea>
 
             <div className="flex flex-wrap gap-3 pt-6 border-t border-white/5">
               {['Gratitude', 'Release', 'Expansion', 'Clarity'].map(tag => (
-                <span key={tag} className="px-4 py-1.5 rounded-full border border-[#d4af37]/50 bg-[#d4af37]/10 text-[#d4af37] text-sm cursor-pointer hover:bg-[#d4af37]/20 transition-all font-medium uppercase tracking-widest">{tag}</span>
+                <span 
+                  key={tag} 
+                  onClick={() => toggleTag(tag)}
+                  className={`px-4 py-1.5 rounded-full border transition-all font-medium uppercase tracking-widest text-sm cursor-pointer
+                    ${tags.includes(tag) 
+                        ? 'border-[#d4af37] bg-[#d4af37]/20 text-[#d4af37]' 
+                        : 'border-[#d4af37]/30 bg-[#d4af37]/5 text-[#ca919f] hover:bg-[#d4af37]/10'}`}
+                >
+                  {tag}
+                </span>
               ))}
               <button className="px-3 py-1.5 rounded-full border border-dashed border-white/30 text-white/50 text-sm hover:border-white/50 hover:text-white flex items-center gap-1">+ Add Tag</button>
             </div>
           </div>
 
           <div className="flex justify-center pb-12">
-            <button className="group relative flex items-center gap-3 px-10 py-4 bg-[#f1275a] rounded-full text-white font-bold text-lg transition-all hover:scale-105 shadow-[0_0_30px_rgba(241,39,90,0.4)]">
-              <span className="material-symbols-outlined">auto_stories</span>
-              <span>Save to Archive</span>
+            <button 
+                onClick={handleSave}
+                disabled={isSaving}
+                className="group relative flex items-center gap-3 px-10 py-4 bg-[#f1275a] rounded-full text-white font-bold text-lg transition-all hover:scale-105 shadow-[0_0_30px_rgba(241,39,90,0.4)] disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined">
+                {isSaving ? 'sync' : 'auto_stories'}
+              </span>
+              <span>{isSaving ? 'Archiving...' : 'Save to Archive'}</span>
               <div className="absolute -inset-1 bg-[#f1275a] blur opacity-20 group-hover:opacity-40 transition-opacity rounded-full"></div>
             </button>
           </div>

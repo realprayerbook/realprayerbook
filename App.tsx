@@ -252,6 +252,7 @@ const App: React.FC = () => {
                 onCommunityClick={() => requireAuth('community')}
                 onAdminClick={() => requireAuth('admin')} 
                 onLogout={handleLogout} 
+                isAdmin={session && ADMIN_EMAILS.includes(session.user.email)}
             >
                {session && ADMIN_EMAILS.includes(session.user.email) && (
                   <button onClick={() => requireAuth('admin')} className="text-brand-gold hover:text-white text-sm font-bold transition-colors animate-pulse">
@@ -262,7 +263,11 @@ const App: React.FC = () => {
         );
 
       case 'journal':
-        return <Journal onBack={() => setView('dashboard')} />;
+        return <Journal 
+          onBack={() => setView('dashboard')} 
+          onCommunityClick={() => requireAuth('community')}
+          onPracticesClick={() => alert('Practices Library coming soon to your archive.')}
+        />;
 
       case 'community':
         return (
