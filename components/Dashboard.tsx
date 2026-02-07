@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DailySignal from './DailySignal'; // New Component
 import Quiz from './Quiz';
+import { getPosts } from '../utils/db';
 
 interface DashboardProps {
   onJournalClick: () => void;
@@ -12,6 +13,21 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick, onAdminClick, onLogout, children }) => {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [latestPost, setLatestPost] = useState<any>(null);
+
+  React.useEffect(() => {
+    const fetchLatest = async () => {
+      try {
+        const posts = await getPosts();
+        if (posts && posts.length > 0) {
+          setLatestPost(posts[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching latest transmission:', err);
+      }
+    };
+    fetchLatest();
+  }, []);
 
   return (
     <div className="bg-[#1a1625] min-h-screen font-manrope text-slate-100 flex flex-col">
@@ -68,6 +84,29 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
 
           {/* Daily Coherence Signal */}
           <DailySignal />
+
+          {/* Latest Transmission Section */}
+          {latestPost && (
+            <div className="mb-12 glass-card p-10 rounded-[3rem] border border-brand-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.1)] relative overflow-hidden group animate-in slide-in-from-bottom duration-1000">
+               <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity">
+                 <span className="material-symbols-outlined text-8xl text-brand-gold">campaign</span>
+               </div>
+               <div className="flex items-center gap-4 mb-6">
+                 <span className="h-px w-12 bg-brand-gold"></span>
+                 <span className="text-brand-gold font-black uppercase tracking-[0.4em] text-[10px]">Latest Wisdom Transmission</span>
+               </div>
+               <h2 className="text-3xl font-regal font-black text-white italic mb-4">{latestPost.title}</h2>
+               <div className="text-white/70 leading-relaxed line-clamp-3 mb-8 text-lg">
+                 {latestPost.content}
+               </div>
+               <button 
+                 onClick={onCommunityClick}
+                 className="flex items-center gap-3 text-brand-gold font-black uppercase tracking-[0.2em] text-xs hover:text-white transition-colors"
+               >
+                 View Full Transmission <span className="material-symbols-outlined">arrow_forward</span>
+               </button>
+            </div>
+          )}
 
           {/* New Grid Layout for Download & Quiz */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">

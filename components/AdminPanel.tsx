@@ -109,28 +109,61 @@ const AdminPanel: React.FC = () => {
             )}
 
             {view === 'create-post' && (
-                <form onSubmit={handlePost} className="glass-card p-12 rounded-[3rem] border border-white/10 space-y-8 max-w-3xl">
-                    <h3 className="text-2xl text-white font-regal italic">New Transmission</h3>
-                    
-                    <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Title</label>
-                        <input className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white focus:border-brand-gold outline-none" placeholder="Enter title..." value={title} onChange={e => setTitle(e.target.value)} required />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <form onSubmit={handlePost} className="glass-card p-12 rounded-[3rem] border border-white/10 space-y-8">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-2xl text-white font-regal italic">New Transmission</h3>
+                            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-[10px] font-black uppercase tracking-widest">
+                                Live Editor
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Title</label>
+                            <input className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white focus:border-brand-gold outline-none" placeholder="Enter title (e.g., The 23rd Prayer Alignment)..." value={title} onChange={e => setTitle(e.target.value)} required />
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Content</label>
+                            <textarea className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white h-48 focus:border-brand-gold outline-none" placeholder="Write your wisdom here..." value={content} onChange={e => setContent(e.target.value)} required />
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Video URL (Optional)</label>
+                            <input className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white focus:border-brand-gold outline-none" placeholder="https://youtube.com/..." value={videoUrl} onChange={e => setVideoUrl(e.target.value)} />
+                        </div>
+                        
+                        <button className="w-full bg-brand-gold text-brand-obsidian py-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-xl gold-glow">
+                            Publish to Community
+                        </button>
+                    </form>
+
+                    {/* Live Preview */}
+                    <div className="hidden lg:block space-y-6">
+                        <div className="flex items-center gap-4 mb-4">
+                            <span className="material-symbols-outlined text-brand-gold">visibility</span>
+                            <span className="text-white/40 uppercase tracking-[0.4em] text-[10px] font-black">Member Preview</span>
+                        </div>
+                        
+                        <div className="glass-card p-10 rounded-[3rem] border-2 border-brand-gold/20 shadow-2xl relative overflow-hidden bg-white/5 opacity-80 scale-95 origin-top">
+                             <div className="absolute top-0 right-0 p-8 opacity-10">
+                                 <span className="material-symbols-outlined text-7xl text-brand-gold">spa</span>
+                             </div>
+                             <h4 className="text-2xl text-white font-regal font-black italic mb-4">{title || 'Transmission Title'}</h4>
+                             <div className="text-white/60 leading-relaxed line-clamp-4 mb-6">
+                                 {content || 'The wisdom you transmit will appear here for all members in the sacred archive...'}
+                             </div>
+                             {videoUrl && (
+                                 <div className="aspect-video bg-black/40 rounded-xl flex items-center justify-center border border-white/10 mb-6">
+                                     <span className="material-symbols-outlined text-4xl text-brand-gold">play_circle</span>
+                                 </div>
+                             )}
+                             <div className="flex items-center gap-3 text-brand-gold font-black tracking-widest text-[8px] uppercase">
+                                 Read Full Wisdom <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                             </div>
+                        </div>
                     </div>
-                    
-                    <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Content</label>
-                        <textarea className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white h-48 focus:border-brand-gold outline-none" placeholder="Write your message..." value={content} onChange={e => setContent(e.target.value)} required />
-                    </div>
-                    
-                    <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-brand-gold font-bold">Video URL (Optional)</label>
-                        <input className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl text-white focus:border-brand-gold outline-none" placeholder="https://youtube.com/..." value={videoUrl} onChange={e => setVideoUrl(e.target.value)} />
-                    </div>
-                    
-                    <button className="w-full bg-brand-gold text-brand-obsidian py-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-white transition-all shadow-xl">
-                        Publish to Community
-                    </button>
-                </form>
+                </div>
             )}
             
             {view === 'orders' && (
