@@ -33,7 +33,11 @@ const App: React.FC = () => {
   const [isCheckingMember, setIsCheckingMember] = useState(false);
 
   // Admin Guard
-  const ADMIN_EMAILS = ['louisenlp@gmail.com', 'mike@dynamicmike.com'];
+  const ADMIN_EMAILS = ['louisenlp@gmail.com', 'mike@dynamicmike.com', 'realai.agency@gmail.com'];
+  const isAdmin = (email?: string) => {
+    if (!email) return false;
+    return ADMIN_EMAILS.some(adminEmail => adminEmail.toLowerCase() === email.toLowerCase());
+  };
 
   const [installPrompt, setInstallPrompt] = useState<any>(null);
 
@@ -57,7 +61,7 @@ const App: React.FC = () => {
   }, []);
 
   const checkMemberStatus = async (userEmail: string) => {
-    if (ADMIN_EMAILS.includes(userEmail)) return true;
+    if (isAdmin(userEmail)) return true;
     
     setIsCheckingMember(true);
     try {
@@ -103,9 +107,11 @@ const App: React.FC = () => {
         if (isAuth) setView('dashboard');
         else setView('membership_locked');
       } else if (hash.startsWith('#admin') && session) {
-        if (ADMIN_EMAILS.includes(session.user.email)) {
+        if (isAdmin(session.user.email)) {
+          console.log('App: Admin access granted for', session.user.email);
           setView('admin');
         } else {
+          console.warn('App: Admin access denied for', session.user.email);
           setView('dashboard');
         }
       } else if (hash.startsWith('#admin') || hash.startsWith('#dashboard') || hash.startsWith('#community')) {
@@ -129,7 +135,7 @@ const App: React.FC = () => {
       setSession(session);
       // Trigger hash check logic again once session is loaded
       if (window.location.hash === '#dashboard' && session) setView('dashboard');
-      if (window.location.hash === '#admin' && session && ADMIN_EMAILS.includes(session.user.email)) setView('admin');
+      if (window.location.hash === '#admin' && session && isAdmin(session.user.email)) setView('admin');
     });
 
     const {
@@ -144,7 +150,7 @@ const App: React.FC = () => {
       if (_event === 'SIGNED_IN' || _event === 'INITIAL_SESSION' || _event === 'USER_UPDATED') {
           if (session) {
               // If we land with a specific target hash, or if we have an access token (magic link)
-              if (hash.startsWith('#admin') && ADMIN_EMAILS.includes(session.user.email)) {
+              if (hash.startsWith('#admin') && isAdmin(session.user.email)) {
                   setView('admin');
               } else if (hash.startsWith('#dashboard') || hash.includes('access_token') || hash.includes('type=recovery')) {
                   // Direct to dashboard for normal magic links or specific dashboard hash
@@ -250,7 +256,7 @@ const App: React.FC = () => {
     switch (view) {
       case 'auth':
         return <Auth onLogin={() => {
-            if (window.location.hash === '#admin' && session && ADMIN_EMAILS.includes(session.user.email)) {
+            if (window.location.hash === '#admin' && session && isAdmin(session.user.email)) {
                 setView('admin');
             } else {
                 setView('dashboard');
@@ -265,9 +271,9 @@ const App: React.FC = () => {
                 onLibraryClick={() => setView('library')}
                 onAdminClick={() => requireAuth('admin')} 
                 onLogout={handleLogout} 
-                isAdmin={session && ADMIN_EMAILS.includes(session.user.email)}
+                isAdmin={session && isAdmin(session.user.email)}
             >
-               {session && ADMIN_EMAILS.includes(session.user.email) && (
+               {session && isAdmin(session.user.email) && (
                   <button onClick={() => requireAuth('admin')} className="text-brand-gold hover:text-white text-sm font-bold transition-colors animate-pulse">
                       Admin Command
                   </button>
