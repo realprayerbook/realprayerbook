@@ -118,6 +118,18 @@ export const getPosts = async () => {
     return data;
 };
 
+export const deletePost = async (id: string) => {
+    const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', id);
+    
+    if (error) {
+        console.error('Error deleting post:', error);
+        throw error;
+    }
+};
+
 export const getShippingRequests = async () => {
     const { data, error } = await supabase
         .from('shipping_requests')

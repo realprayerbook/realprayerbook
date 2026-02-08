@@ -10,6 +10,24 @@ interface Post {
     created_at: string;
 }
 
+const getYoutubeEmbedUrl = (url: string) => {
+    if (!url) return '';
+    
+    // Regular YouTube URL (watch?v=...)
+    let videoId = '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    
+    if (match && match[2].length === 11) {
+        videoId = match[2];
+    } else {
+        // Fallback or non-youtube
+        return url;
+    }
+
+    return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
+};
+
 const CommunityFeed: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
@@ -52,7 +70,7 @@ const CommunityFeed: React.FC = () => {
                     {post.video_url && (
                         <div className="aspect-video bg-black rounded-2xl overflow-hidden mb-8 shadow-2xl border border-white/10">
                             <iframe 
-                                src={post.video_url.includes('youtube') ? post.video_url.replace('watch?v=', 'embed/') : post.video_url} 
+                                src={getYoutubeEmbedUrl(post.video_url)} 
                                 className="w-full h-full" 
                                 frameBorder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 

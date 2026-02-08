@@ -1,14 +1,14 @@
-
 import React, { useEffect, useState } from 'react';
-import { createPost, getShippingRequests, saveSystemConfig, getSystemConfig } from '../utils/db';
+import { createPost, getShippingRequests, saveSystemConfig, getSystemConfig, getPosts, deletePost } from '../utils/db';
 
 const AdminPanel: React.FC = () => {
-    const [view, setView] = useState<'create-post' | 'orders' | 'settings'>('create-post');
+    const [view, setView] = useState<'create-post' | 'orders' | 'settings' | 'archive'>('create-post');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [videoUrl, setVideoUrl] = useState('');
     const [apiKey, setApiKey] = useState('');
     const [orders, setOrders] = useState<any[]>([]);
+    const [posts, setPosts] = useState<any[]>([]);
     const [loadingInfo, setLoadingInfo] = useState(false);
 
     useEffect(() => {
@@ -16,6 +16,8 @@ const AdminPanel: React.FC = () => {
             loadOrders();
         } else if (view === 'settings') {
             loadSettings();
+        } else if (view === 'archive') {
+            loadPosts();
         }
     }, [view]);
 
@@ -33,6 +35,30 @@ const AdminPanel: React.FC = () => {
             console.error(err);
         } finally {
             setLoadingInfo(false);
+        }
+    };
+
+    const loadPosts = async () => {
+        setLoadingInfo(true);
+        try {
+            const data = await getPosts();
+            if (data) setPosts(data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoadingInfo(false);
+        }
+    };
+
+    const handleDeletePost = async (id: string) => {
+        if (!confirm('Are you certain you wish to delete this transmission forever?')) return;
+        try {
+            await deletePost(id);
+            await loadPosts();
+            alert('Transmission Removals successful');
+        } catch (err) {
+            console.error(err);
+            alert('Error deleting post');
         }
     };
 
@@ -79,12 +105,48 @@ const AdminPanel: React.FC = () => {
                   Dispatch Queue
                 </button>
                 <button 
+                  onClick={() => setView('archive')} 
+                  className={`px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${view === 'archive' ? 'bg-brand-gold text-brand-obsidian shadow-lg' : 'bg-white/5 text-white hover:bg-white/10'}`}
+                >
+                  Archives
+                </button>
+                <button 
                   onClick={() => setView('settings')} 
                   className={`px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${view === 'settings' ? 'bg-brand-gold text-brand-obsidian shadow-lg' : 'bg-white/5 text-white hover:bg-white/10'}`}
                 >
                   Settings
                 </button>
             </div>
+
+            {view === 'archive' && (
+                <div className="glass-card p-12 rounded-[4rem] border border-white/10">
+                    <h3 className="text-3xl text-white font-regal italic mb-10">Archive Management</h3>
+                    {loadingInfo ? (
+                        <div className="text-white/50 animate-pulse">Scanning the archives...</div>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-6">
+                            {posts.length === 0 && <p className="text-white/30 italic">No transmissions found.</p>}
+                            {posts.map(post => (
+                                <div key={post.id} className="flex items-center justify-between p-6 bg-white/5 rounded-3xl border border-white/5 hover:border-white/10 transition-all">
+                                    <div className="space-y-1">
+                                        <h4 className="text-white font-bold text-lg">{post.title}</h4>
+                                        <p className="text-white/40 text-xs">
+                                            {post.video_url ? '🎥 Includes Video' : '📝 Text only'} • {new Date(post.created_at).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    <button 
+                                        onClick={() => handleDeletePost(post.id)}
+                                        className="size-12 rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
+                                        title="Delete Transmission"
+                                    >
+                                        <span className="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
 
             {view === 'settings' && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
