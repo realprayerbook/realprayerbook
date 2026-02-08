@@ -48,8 +48,12 @@ const App: React.FC = () => {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
       const isSubdomain = hostname.startsWith('members.') || hostname.startsWith('app.') || hostname.includes('members.realprayerbook-eight');
+      const isAdminSubdomain = hostname.startsWith('admin.');
       
-      if (isSubdomain && view === 'landing' && window.location.hash === '') {
+      if (isAdminSubdomain && view !== 'admin' && view !== 'auth') {
+        console.log('App: Admin subdomain detected. Isolating view.');
+        setView('admin');
+      } else if (isSubdomain && view === 'landing' && window.location.hash === '') {
         console.log('App: Subdomain detected. Defaulting to auth/member view.');
         setView('auth');
       }
@@ -114,7 +118,8 @@ const App: React.FC = () => {
           setView('admin');
         } else {
           console.warn('App: Admin access denied for', session.user.email);
-          setView('dashboard');
+          // NEW: Don't redirect to dashboard, stay in a "Restricted" state or locked view
+          setView('membership_locked');
         }
       } else if (hash.startsWith('#admin') || hash.startsWith('#dashboard') || hash.startsWith('#community')) {
          if (!session) {
@@ -151,9 +156,16 @@ const App: React.FC = () => {
       // Handle login transitions (including magic links and initial sessions with tokens)
       if (_event === 'SIGNED_IN' || _event === 'INITIAL_SESSION' || _event === 'USER_UPDATED') {
           if (session) {
+              const isAdminUser = isAdmin(session.user.email);
+              
               // If we land with a specific target hash, or if we have an access token (magic link)
-              if (hash.startsWith('#admin') && isAdmin(session.user.email)) {
-                  setView('admin');
+              if (hash.startsWith('#admin')) {
+                  if (isAdminUser) {
+                      setView('admin');
+                  } else {
+                      console.error('App: Magic link intended for admin, but user is not authorized:', session.user.email);
+                      setView('membership_locked');
+                  }
               } else if (hash.startsWith('#dashboard') || hash.includes('access_token') || hash.includes('type=recovery')) {
                   // Direct to dashboard for normal magic links or specific dashboard hash
                   setView('dashboard');

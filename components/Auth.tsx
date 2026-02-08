@@ -13,7 +13,8 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isResetMode, setIsResetMode] = useState(window.location.hash.startsWith('#reset-password'));
-  const isAdminView = window.location.hash.startsWith('#admin');
+  const isAdminSubdomain = typeof window !== 'undefined' && window.location.hostname.startsWith('admin.');
+  const isAdminView = window.location.hash.startsWith('#admin') || isAdminSubdomain;
   const [useMagicLink, setUseMagicLink] = useState(isAdminView); // Default to true for Admins
 
   React.useEffect(() => {
