@@ -106,7 +106,7 @@ const LibraryExplorer: React.FC<LibraryExplorerProps> = ({ onBack }) => {
                             
                             <div className="p-8 rounded-[2rem] bg-brand-magenta/5 border border-brand-magenta/20">
                                 <p className="text-white/70 text-sm leading-relaxed">
-                                    <strong className="text-brand-magenta">Note:</strong> Full prayers are revealed daily in your "Daily Signal." This curriculum explorer shows the titles to help you map your evolution.
+                                    <strong className="text-brand-gold">Access Protocol:</strong> To preserve the integrity of your transformation, full insights are revealed sequentially via your daily signal. Use this curriculum to map your intended evolution.
                                 </p>
                             </div>
                         </div>

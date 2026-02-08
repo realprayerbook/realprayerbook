@@ -279,7 +279,6 @@ const App: React.FC = () => {
         return <Journal 
           onBack={() => setView('dashboard')} 
           onCommunityClick={() => requireAuth('community')}
-          onPracticesClick={() => alert('Practices Library coming soon to your archive.')}
         />;
 
       case 'community':

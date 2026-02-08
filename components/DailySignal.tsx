@@ -53,10 +53,10 @@ const DailySignal: React.FC = () => {
             setLoading(false);
             // Fallback for missing data
             setSignal({
-                title: "Stillness",
-                insight: "The archive is tuning into your unique frequency.",
-                command: "Command your day with your own sovereign will.",
-                seal: "You are the creator. And so it is done."
+                title: "Internal Resonance",
+                insight: "The archive is currently recalibrating to your precise signature. Return in a moment for the full transmission.",
+                command: "Hold the line within your own sovereign stillness.",
+                seal: "And so it is done."
             });
             animateReveal();
         }

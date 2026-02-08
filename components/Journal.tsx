@@ -4,10 +4,9 @@ import { saveJournalEntry, getTodayJournalEntry, JournalEntry } from '../utils/d
 interface JournalProps {
   onBack: () => void;
   onCommunityClick: () => void;
-  onPracticesClick: () => void;
 }
 
-const Journal: React.FC<JournalProps> = ({ onBack, onCommunityClick, onPracticesClick }) => {
+const Journal: React.FC<JournalProps> = ({ onBack, onCommunityClick }) => {
   const [content, setContent] = useState('');
   const [frequency, setFrequency] = useState(75);
   const [tags, setTags] = useState<string[]>(['Gratitude']);
@@ -83,7 +82,6 @@ const Journal: React.FC<JournalProps> = ({ onBack, onCommunityClick, onPractices
           <div className="hidden lg:flex gap-9 text-white/70 text-sm font-medium">
             <button onClick={onBack} className="hover:text-white transition-colors">Dashboard</button>
             <span className="text-white border-b-2 border-[#f1275a]">Journals</span>
-            <button onClick={onPracticesClick} className="hover:text-white transition-colors">Practices</button>
             <button onClick={onCommunityClick} className="hover:text-white transition-colors">Community</button>
           </div>
           <div className="flex gap-2">
