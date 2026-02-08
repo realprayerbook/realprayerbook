@@ -112,7 +112,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
   }, [amount]);
 
   const tiers = [
-    { label: 'Supporter', value: 15, desc: 'Complete Digital Archive (PDF/EPUB)', icon: 'spa' },
+    { label: 'Supporter', value: 5, desc: 'Complete Digital Archive (PDF)', icon: 'spa' },
     { label: 'Guardian', value: 24, desc: 'Physical Book + Membership + Friend Gift', icon: 'filter_vintage', recommended: true },
     { label: 'Patron', value: 95, desc: 'Special Award Edition + Mentoring Access', icon: 'auto_awesome' },
   ];
@@ -150,6 +150,11 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
                   <div className="inline-flex items-center gap-2 text-brand-gold/80 text-[10px] font-bold uppercase tracking-widest border border-brand-gold/30 px-3 py-1 rounded-full">
                     <span className="material-symbols-outlined text-sm">card_giftcard</span>
                     Free Friend Download
+                  </div>
+                  <div className="mt-4 p-4 bg-brand-obsidian/50 rounded-2xl border border-white/5 text-left max-w-[280px]">
+                    <p className="text-[10px] text-white/70 leading-relaxed italic">
+                      After payment, you will instantly be able to access the member's special dashboard. However, you may cancel your monthly subscription at any time without penalty.
+                    </p>
                   </div>
                 </div>
               )}

@@ -50,9 +50,10 @@ const Features: React.FC = () => {
             <div className="aspect-[4/5] bg-brand-obsidian rounded-[3rem] overflow-hidden shadow-2xl relative group">
                 <iframe 
                   className="absolute inset-0 w-full h-full" 
-                  src="https://www.youtube.com/embed/Xebx3GusdWk?rel=0&modestbranding=1" 
+                  src="https://www.youtube-nocookie.com/embed/Xebx3GusdWk?rel=0&modestbranding=1" 
                   title="RealPrayer Welcome" 
                   frameBorder="0" 
+                  loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                   allowFullScreen
                 ></iframe>

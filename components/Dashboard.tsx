@@ -83,9 +83,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
           <div className="mb-12 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl relative aspect-video bg-black/40">
               <iframe 
                 className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/C4MnuBwrlHc?rel=0&modestbranding=1" 
+                src="https://www.youtube-nocookie.com/embed/C4MnuBwrlHc?rel=0&modestbranding=1" 
                 title="RealPrayer Thank You" 
                 frameBorder="0" 
+                loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowFullScreen
               ></iframe>
