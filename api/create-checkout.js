@@ -26,8 +26,8 @@ export default async function handler(req, res) {
                 price_data: {
                     currency: 'eur',
                     product_data: {
-                        name: 'Real Prayer Donation',
-                        description: 'Your immediate contribution',
+                        name: 'Real Prayer Archive Access',
+                        description: 'Instant dashboard access included. You may cancel your monthly subscription at any time without penalty.',
                     },
                     unit_amount: Math.round(amount * 100),
                 },
