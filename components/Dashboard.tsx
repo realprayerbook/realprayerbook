@@ -54,15 +54,15 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
             </div>
             <h2 className="text-white text-xl font-bold tracking-tight">Real Prayer</h2>
           </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <button onClick={onLibraryClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors cursor-pointer">Library</button>
-            <button onClick={onJournalClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Journal</button>
-            <button onClick={onCommunityClick} className="text-white/70 hover:text-[#f4d125] text-sm font-medium transition-colors">Community</button>
+          <nav className="flex items-center gap-4 lg:gap-6 overflow-x-auto no-scrollbar py-2">
+            <button onClick={onLibraryClick} className="text-white/70 hover:text-[#f4d125] text-xs lg:text-sm font-medium transition-colors cursor-pointer whitespace-nowrap">Library</button>
+            <button onClick={onJournalClick} className="text-white/70 hover:text-[#f4d125] text-xs lg:text-sm font-medium transition-colors whitespace-nowrap">Journal</button>
+            <button onClick={onCommunityClick} className="text-white/70 hover:text-[#f4d125] text-sm lg:text-sm font-medium transition-colors whitespace-nowrap">Community</button>
             {/* Inject dynamic links here (Admin) */}
             {children}
           </nav>
         </div>
-        <button onClick={onLogout} className="text-xs uppercase tracking-widest font-bold text-white/50 hover:text-white transition-colors">Logout</button>
+        <button onClick={onLogout} className="text-[10px] lg:text-xs uppercase tracking-widest font-bold text-white/50 hover:text-white transition-colors shrink-0 ml-4">Logout</button>
       </header>
 
       <div className="flex flex-1 overflow-hidden">

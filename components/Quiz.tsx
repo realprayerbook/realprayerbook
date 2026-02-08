@@ -118,7 +118,7 @@ const Quiz: React.FC<QuizProps> = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-6">
       <div className="absolute inset-0 bg-brand-obsidian/95 backdrop-blur-md" onClick={onClose}></div>
       
-      <div ref={containerRef} className="relative w-full max-w-2xl bg-[#2E1A47] border border-white/10 rounded-3xl p-8 lg:p-12 shadow-2xl overflow-hidden min-h-[500px] flex flex-col justify-center">
+      <div ref={containerRef} className="relative w-full max-w-2xl bg-[#2E1A47] border border-white/10 rounded-3xl p-6 lg:p-12 shadow-2xl overflow-y-auto max-h-[85vh] flex flex-col">
         <button onClick={onClose} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors">
           <span className="material-symbols-outlined">close</span>
         </button>
