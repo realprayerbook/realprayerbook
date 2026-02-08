@@ -39,14 +39,14 @@ const WeeklyTracker: React.FC<WeeklyTrackerProps> = ({ visits }) => {
         </div>
       </div>
 
-      <div className="glass-card bg-brand-obsidian/40 border border-white/10 rounded-3xl p-6 lg:p-8 flex items-center justify-between gap-2">
+      <div className="glass-card bg-brand-obsidian/40 border border-white/10 rounded-3xl p-4 lg:p-8 flex items-center justify-between gap-1 lg:gap-2">
         {weekDays.map((day, idx) => (
           <div key={day.name} className="flex flex-col items-center gap-4 flex-1">
-            <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${day.isToday ? 'text-brand-gold' : 'text-white/30'}`}>
+            <span className={`text-[8px] lg:text-[10px] font-black uppercase tracking-widest transition-colors ${day.isToday ? 'text-brand-gold' : 'text-white/30'}`}>
               {day.name}
             </span>
             
-            <div className={`relative size-12 lg:size-14 rounded-full flex items-center justify-center transition-all duration-500 border
+            <div className={`relative size-10 lg:size-14 rounded-full flex items-center justify-center transition-all duration-500 border
               ${day.isVisited 
                 ? 'bg-brand-gold border-brand-gold shadow-[0_0_20px_rgba(212,175,55,0.4)]' 
                 : day.isToday
@@ -55,9 +55,9 @@ const WeeklyTracker: React.FC<WeeklyTrackerProps> = ({ visits }) => {
               }`}>
               
               {day.isVisited ? (
-                <span className="material-symbols-outlined text-brand-purple font-black transition-all scale-110">done_all</span>
+                <span className="material-symbols-outlined text-brand-purple font-black transition-all scale-90 lg:scale-110">done_all</span>
               ) : day.isToday ? (
-                <span className="size-2 rounded-full bg-brand-gold/50"></span>
+                <span className="size-1.5 lg:size-2 rounded-full bg-brand-gold/50"></span>
               ) : null}
 
               {day.isToday && !day.isVisited && (
@@ -66,7 +66,7 @@ const WeeklyTracker: React.FC<WeeklyTrackerProps> = ({ visits }) => {
             </div>
             
             {day.isToday && (
-                <span className="text-[9px] font-bold text-brand-gold uppercase tracking-tighter">Current Day</span>
+                <span className="text-[7px] lg:text-[9px] font-bold text-brand-gold uppercase tracking-tighter">Current Day</span>
             )}
           </div>
         ))}

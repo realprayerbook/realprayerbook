@@ -447,15 +447,15 @@ const App: React.FC = () => {
         
         {view === 'landing' && <Footer onCtaClick={handleOpenLeadCapture} />}
         
-        {/* Floating PWA Install Button - Moved to Member View */}
+        {/* Floating PWA Install Button - Refined for Premium Feel */}
         {(view === 'dashboard' || view === 'admin' || view === 'journal') && (
           <div 
-            className="fixed bottom-12 right-12 z-50 flex items-center gap-6 bg-brand-gold text-brand-purple px-10 py-5 rounded-full shadow-[0_0_60px_rgba(212,175,55,0.6)] hover:scale-110 transition-all cursor-pointer group gold-glow"
+            className="fixed bottom-12 right-12 z-50 flex items-center gap-4 bg-brand-gold text-brand-purple p-4 lg:px-10 lg:py-5 rounded-3xl lg:rounded-full shadow-[0_0_60px_rgba(212,175,55,0.6)] hover:scale-110 transition-all cursor-pointer group gold-glow border-2 border-white/20"
             onClick={installPrompt ? handleInstallApp : undefined}
             style={{ display: installPrompt ? 'flex' : 'none' }}
           >
-            <span className="text-xs font-black uppercase tracking-[0.5em] hidden lg:block">Install App</span>
-            <span className="material-symbols-outlined text-3xl font-black">install_mobile</span>
+            <span className="text-xs font-black uppercase tracking-[0.5em] hidden lg:block">Command the Archive</span>
+            <span className="material-symbols-outlined text-3xl lg:text-4xl font-black">add_to_home_screen</span>
           </div>
         )}
       </div>

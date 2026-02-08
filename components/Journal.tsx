@@ -79,22 +79,31 @@ const Journal: React.FC<JournalProps> = ({ onBack, onCommunityClick }) => {
           <h2 className="text-lg font-bold tracking-tight">Real Prayer</h2>
         </div>
         <div className="flex gap-8 items-center">
-          <div className="hidden lg:flex gap-9 text-white/70 text-sm font-medium">
-            <button onClick={onBack} className="hover:text-white transition-colors">Dashboard</button>
-            <span className="text-white border-b-2 border-[#f1275a]">Journals</span>
-            <button onClick={onCommunityClick} className="hover:text-white transition-colors">Community</button>
-          </div>
+          <nav className="flex items-center gap-4 lg:gap-9 overflow-x-auto no-scrollbar py-2">
+            <button onClick={onBack} className="text-white/70 hover:text-white text-xs lg:text-sm font-medium transition-colors whitespace-nowrap">Dashboard</button>
+            <span className="text-white border-b-2 border-[#f1275a] text-xs lg:text-sm font-medium whitespace-nowrap">Journals</span>
+            <button onClick={onCommunityClick} className="text-white/70 hover:text-white text-xs lg:text-sm font-medium transition-colors whitespace-nowrap">Community</button>
+          </nav>
           <div className="flex gap-2">
-            <button className="flex items-center justify-center rounded-xl h-10 w-10 bg-[#48232c] text-white">
-              <span className="material-symbols-outlined">notifications</span>
+            <button 
+              onClick={() => alert('Notifications coming soon to your archive.')}
+              className="flex items-center justify-center rounded-xl h-8 w-8 lg:h-10 lg:w-10 bg-[#48232c] text-white hover:bg-[#63323d] transition-colors"
+            >
+              <span className="material-symbols-outlined text-sm lg:text-base">notifications</span>
             </button>
-            <button className="flex items-center justify-center rounded-xl h-10 w-10 bg-[#48232c] text-white">
-              <span className="material-symbols-outlined">settings</span>
+            <button 
+              onClick={() => alert('Settings coming soon.')}
+              className="flex items-center justify-center rounded-xl h-8 w-8 lg:h-10 lg:w-10 bg-[#48232c] text-white hover:bg-[#63323d] transition-colors"
+            >
+              <span className="material-symbols-outlined text-sm lg:text-base">settings</span>
             </button>
           </div>
-          <div className="size-10 rounded-full border border-[#f1275a]/30 overflow-hidden bg-brand-obsidian flex items-center justify-center">
-             <span className="material-symbols-outlined text-white/40">person</span>
-          </div>
+          <button 
+            onClick={() => alert('Profile management coming soon.')}
+            className="size-8 lg:size-10 rounded-full border border-[#f1275a]/30 overflow-hidden bg-brand-obsidian flex items-center justify-center hover:border-[#f1275a] transition-colors"
+          >
+             <span className="material-symbols-outlined text-white/40 text-sm lg:text-base">person</span>
+          </button>
         </div>
       </header>
 
