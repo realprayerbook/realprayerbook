@@ -49,7 +49,7 @@ const App: React.FC = () => {
       const hostname = window.location.hostname;
       const isSubdomain = hostname.startsWith('members.') || hostname.startsWith('app.') || hostname.includes('members.realprayerbook-eight');
       
-      if (isSubdomain && view === 'landing') {
+      if (isSubdomain && view === 'landing' && window.location.hash === '') {
         console.log('App: Subdomain detected. Defaulting to auth/member view.');
         setView('auth');
       }
@@ -272,6 +272,7 @@ const App: React.FC = () => {
                 onCommunityClick={() => requireAuth('community')}
                 onLibraryClick={() => setView('library')}
                 onAdminClick={() => requireAuth('admin')} 
+                onHomeClick={() => setView('landing')}
                 onLogout={handleLogout} 
                 isAdmin={session && isAdmin(session.user.email)}
             >
@@ -287,6 +288,7 @@ const App: React.FC = () => {
         return <Journal 
           onBack={() => setView('dashboard')} 
           onCommunityClick={() => requireAuth('community')}
+          onHomeClick={() => setView('landing')}
         />;
 
       case 'community':
