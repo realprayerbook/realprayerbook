@@ -33,10 +33,12 @@ const App: React.FC = () => {
   const [isCheckingMember, setIsCheckingMember] = useState(false);
 
   // Admin Guard
-  const ADMIN_EMAILS = ['louisenlp@gmail.com', 'mike@dynamicmike.com', 'realai.agency@gmail.com'];
+  const ADMIN_EMAILS = ['louisenlp@gmail.com', 'mike@dynamicmike.com'];
   const isAdmin = (email?: string) => {
     if (!email) return false;
-    return ADMIN_EMAILS.some(adminEmail => adminEmail.toLowerCase() === email.toLowerCase());
+    const match = ADMIN_EMAILS.includes(email);
+    console.log(`App: Checking admin for ${email} -> ${match}`);
+    return match;
   };
 
   const [installPrompt, setInstallPrompt] = useState<any>(null);
