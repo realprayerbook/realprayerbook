@@ -66,8 +66,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onLogout }) => {
                  </p>
                </div>
                <a 
-                 href="/assets/RealPrayerBook..pdf" 
-                 download="RealPrayerBook_DrLouise.pdf"
+                 href="/assets/RealPrayerBook-Updated10feb26.pdf" 
+                 download="RealPrayerBook_Updated_Feb2026.pdf"
                  className="relative z-10 w-full bg-[#f4d125] text-[#1a1625] py-4 rounded-xl font-bold uppercase tracking-widest text-center shadow-lg hover:scale-[1.02] transition-transform flex items-center justify-center gap-3"
                >
                  <span className="material-symbols-outlined">download</span>

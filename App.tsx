@@ -400,8 +400,8 @@ const App: React.FC = () => {
                     </p>
                   </div>
                   <a 
-                    href="/assets/RealPrayerBook..pdf" 
-                    download="RealPrayerBook_DrLouise.pdf"
+                    href="/assets/RealPrayerBook-Updated10feb26.pdf" 
+                    download="RealPrayerBook_Updated_Feb2026.pdf"
                     className="w-full md:w-auto bg-brand-gold text-brand-purple px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-4 gold-glow"
                   >
                     <span className="material-symbols-outlined">download</span> Download PDF
@@ -444,8 +444,8 @@ const App: React.FC = () => {
                       <h3 className="text-2xl font-regal font-black text-white italic">Instant Access</h3>
                     </div>
                     <a 
-                      href="/assets/RealPrayerBook..pdf" 
-                      download="RealPrayerBook_DrLouise.pdf"
+                      href="/assets/RealPrayerBook-Updated10feb26.pdf" 
+                      download="RealPrayerBook_Updated_Feb2026.pdf"
                       className="w-full bg-brand-gold text-brand-purple py-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 gold-glow"
                     >
                       Download Digital Copy

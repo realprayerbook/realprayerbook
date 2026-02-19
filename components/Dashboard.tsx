@@ -142,8 +142,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onJournalClick, onCommunityClick,
                  </p>
                </div>
                 <a 
-                  href="/assets/RealPrayerBook..pdf" 
-                  download="RealPrayerBook_DrLouise.pdf"
+                  href="/assets/RealPrayerBook-Updated10feb26.pdf" 
+                  download="RealPrayerBook_Updated_Feb2026.pdf"
                   className="relative z-10 w-full bg-brand-gold text-brand-purple py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-4 gold-glow"
                 >
                   <span className="material-symbols-outlined text-2xl">download</span>
