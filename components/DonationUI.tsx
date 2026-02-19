@@ -33,8 +33,8 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
     }
   };
 
-  const handleSubmit = async () => {
-    if (isPhysical) {
+  const handleSubmit = async (type: 'donation' | 'buy_now' = 'donation') => {
+    if (type === 'donation' && isPhysical) {
         if (!userName || !userPhone || !userAddress) {
             alert('Please complete all shipping details for physical delivery.');
             return;
@@ -44,15 +44,17 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
     setIsSubmitting(true);
     try {
         // 1. First save to Supabase to capture the "intent" and shipping details
-        // This ensures we have the record even if they drop off at Stripe
-        await saveShippingDetails({
-            user_name: userName,
-            user_phone: userPhone,
-            user_address: userAddress,
-            friend_name: friendName,
-            friend_email: friendEmail,
-            amount
-        });
+        // Note: For buy_now, we might skip this or handle it differently if shipping comes from Stripe
+        if (type === 'donation' && isPhysical) {
+            await saveShippingDetails({
+                user_name: userName,
+                user_phone: userPhone,
+                user_address: userAddress,
+                friend_name: friendName,
+                friend_email: friendEmail,
+                amount
+            });
+        }
 
         // 2. Call our API to create a Stripe Checkout Session
         const response = await fetch('/api/create-checkout', {
@@ -61,9 +63,10 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                amount, // Send the slider amount
-                email: friendEmail || undefined, // Optional: Pre-fill email
-                isPhysical
+                amount: type === 'buy_now' ? 24 : amount,
+                email: friendEmail || undefined, 
+                isPhysical: type === 'buy_now' || isPhysical,
+                type
             }),
         });
 
@@ -183,6 +186,40 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
           </div>
         </div>
 
+        {/* Buy Now Bump Box */}
+        <div className="mt-12 bg-white/5 border-2 border-brand-gold/30 rounded-[3rem] p-10 relative overflow-hidden group hover:border-brand-gold transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+          <div className="absolute top-0 right-0 bg-brand-gold text-brand-purple px-8 py-3 text-[10px] font-black uppercase tracking-widest rounded-bl-3xl shadow-xl">Limited Offer</div>
+          <div className="flex flex-col md:flex-row items-center gap-8 text-left">
+            <div className="size-20 bg-brand-gold/20 rounded-2xl flex items-center justify-center text-brand-gold border border-brand-gold/30 shrink-0">
+               <span className="material-symbols-outlined text-5xl">auto_stories</span>
+            </div>
+            <div className="flex-1">
+              <h4 className="text-2xl font-regal font-black text-white italic mb-2">Own the Physical Manuscript</h4>
+              <p className="text-white/70 text-sm leading-relaxed mb-6 font-medium">
+                Want to hold the frequency in your hands? Get the beautifully bound physical book delivered to your door. <span className="text-brand-gold font-bold">One-time payment, no ongoing subscription.</span>
+              </p>
+              <div className="flex flex-wrap items-center gap-4">
+                 <div className="inline-flex items-center gap-2 bg-brand-gold/10 text-brand-gold text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full border border-brand-gold/20">
+                   <span className="material-symbols-outlined text-sm">local_shipping</span> Global Shipping Included
+                 </div>
+                 <div className="inline-flex items-center gap-2 bg-brand-gold/10 text-brand-gold text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full border border-brand-gold/20">
+                   <span className="material-symbols-outlined text-sm">download</span> Instant PDF Access
+                 </div>
+              </div>
+            </div>
+            <div className="text-center md:text-right shrink-0">
+               <p className="text-brand-gold text-4xl font-regal font-black mb-4 italic">€24</p>
+               <button 
+                 onClick={() => handleSubmit('buy_now')}
+                 disabled={isSubmitting}
+                 className="px-10 py-5 bg-brand-gold text-brand-purple rounded-2xl font-black text-xs tracking-widest uppercase hover:scale-105 transition-all shadow-xl disabled:opacity-50"
+               >
+                 Buy Now
+               </button>
+            </div>
+          </div>
+        </div>
+
         <div ref={formRef} className="overflow-hidden">
           <div className="pt-12 space-y-12 border-t border-white/20 mt-12 text-left">
             
@@ -265,7 +302,7 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
         </div>
         
         <button 
-          onClick={handleSubmit}
+          onClick={() => handleSubmit('donation')}
           disabled={isSubmitting}
           className="w-full mt-16 py-8 bg-brand-gold text-brand-purple rounded-[2rem] font-black text-sm tracking-[0.4em] uppercase gold-glow hover:bg-white hover:scale-[1.02] transition-all shadow-2xl disabled:opacity-50"
         >

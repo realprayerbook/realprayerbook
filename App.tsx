@@ -28,7 +28,7 @@ if (typeof window !== 'undefined') {
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLeadCaptureOpen, setIsLeadCaptureOpen] = useState(false); 
-  const [view, setView] = useState<'landing' | 'dashboard' | 'journal' | 'auth' | 'community' | 'admin' | 'membership_locked' | 'library'>('landing');
+  const [view, setView] = useState<'landing' | 'dashboard' | 'journal' | 'auth' | 'community' | 'admin' | 'membership_locked' | 'library' | 'pdf_download' | 'book_success'>('landing');
   const [session, setSession] = useState<any>(null);
   const [isCheckingMember, setIsCheckingMember] = useState(false);
 
@@ -63,6 +63,19 @@ const App: React.FC = () => {
         e.preventDefault();
         setInstallPrompt(e);
       });
+
+      // Handle Stripe Success Query Params
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('payment_success') === 'true') {
+        const type = params.get('type');
+        console.log('App: Stripe Success detected. Type:', type);
+        if (type === 'buy_now') setView('book_success');
+        else if (type === 'donation_low') setView('pdf_download');
+        else if (type === 'donation_high') setView('dashboard');
+        
+        // Clear params from URL without reload
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+      }
     }
   }, []);
 
@@ -203,11 +216,14 @@ const App: React.FC = () => {
             scrollTrigger: {
               trigger: section,
               start: 'top 90%',
-              toggleActions: 'play none none reverse',
+              toggleActions: 'play none none none', // Don't reverse so it stays visible
             }
           }
         );
       });
+      
+      // Crucial: Refresh ScrollTrigger whenever view change or content loads
+      ScrollTrigger.refresh();
     });
 
     return () => {
@@ -353,6 +369,91 @@ const App: React.FC = () => {
                   Sign in with a different email
                 </button>
               </div>
+            </div>
+          </div>
+        );
+
+      case 'pdf_download':
+        return (
+          <div className="min-h-screen bg-[#1a1625] flex flex-col items-center justify-center p-8">
+            <div className="max-w-4xl w-full text-center mb-12 animate-in fade-in slide-in-from-bottom duration-1000">
+               <span className="text-brand-gold text-xs font-black tracking-[0.5em] uppercase mb-6 block">Transmission Complete</span>
+               <h1 className="text-6xl font-regal font-black text-white italic mb-8">Thank You for Your Support</h1>
+               <div className="rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl relative aspect-video bg-black/40 mb-12">
+                  <iframe 
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube-nocookie.com/embed/C4MnuBwrlHc?rel=0&modestbranding=1" 
+                    title="RealPrayer Thank You" 
+                    frameBorder="0" 
+                    allowFullScreen
+                  ></iframe>
+               </div>
+               
+               <div className="bg-white/5 border border-brand-gold/30 rounded-3xl p-10 flex flex-col md:flex-row items-center gap-10 text-left relative overflow-hidden group">
+                  <div className="size-24 rounded-2xl bg-brand-gold/20 flex items-center justify-center text-brand-gold shrink-0">
+                    <span className="material-symbols-outlined text-6xl">book_5</span>
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-3xl font-regal font-black text-white italic mb-2">The Digital Archive</h2>
+                    <p className="text-white/70 leading-relaxed mb-0">
+                      Your complete guide to frequency alignment is ready. Download the full manuscript to begin your study of the 22 Prayers.
+                    </p>
+                  </div>
+                  <a 
+                    href="/assets/RealPrayerBook..pdf" 
+                    download="RealPrayerBook_DrLouise.pdf"
+                    className="w-full md:w-auto bg-brand-gold text-brand-purple px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-4 gold-glow"
+                  >
+                    <span className="material-symbols-outlined">download</span> Download PDF
+                  </a>
+               </div>
+               <button onClick={() => setView('landing')} className="mt-12 text-white/50 hover:text-white transition-colors uppercase tracking-[0.3em] text-[10px] font-black italic underline underline-offset-8">Return to Enlightenment</button>
+            </div>
+          </div>
+        );
+
+      case 'book_success':
+        return (
+          <div className="min-h-screen bg-[#1a1625] flex flex-col items-center justify-center p-8">
+            <div className="max-w-4xl w-full text-center mb-12 animate-in fade-in slide-in-from-bottom duration-1000">
+               <span className="text-brand-gold text-xs font-black tracking-[0.5em] uppercase mb-6 block">Order Confirmed</span>
+               <h1 className="text-6xl font-regal font-black text-white italic mb-8">The Manuscript is Yours</h1>
+               <div className="rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl relative aspect-video bg-black/40 mb-12">
+                  <iframe 
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube-nocookie.com/embed/C4MnuBwrlHc?rel=0&modestbranding=1" 
+                    title="RealPrayer Thank You" 
+                    frameBorder="0" 
+                    allowFullScreen
+                  ></iframe>
+               </div>
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 text-left">
+                  <div className="bg-white/5 border border-brand-gold/30 rounded-3xl p-8 flex flex-col gap-6">
+                    <div className="flex items-center gap-4">
+                      <span className="material-symbols-outlined text-brand-gold text-4xl">local_shipping</span>
+                      <h3 className="text-2xl font-regal font-black text-white italic">Physical Dispatch</h3>
+                    </div>
+                    <p className="text-white/70 text-sm leading-relaxed">
+                      Your physical book will be sent to the address provided to Stripe. You will receive a notification once the transmission has been dispatched.
+                    </p>
+                  </div>
+                  <div className="bg-white/5 border border-brand-gold/30 rounded-3xl p-8 flex flex-col justify-between group">
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="material-symbols-outlined text-brand-gold text-4xl">download</span>
+                      <h3 className="text-2xl font-regal font-black text-white italic">Instant Access</h3>
+                    </div>
+                    <a 
+                      href="/assets/RealPrayerBook..pdf" 
+                      download="RealPrayerBook_DrLouise.pdf"
+                      className="w-full bg-brand-gold text-brand-purple py-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 gold-glow"
+                    >
+                      Download Digital Copy
+                    </a>
+                  </div>
+               </div>
+               
+               <button onClick={() => setView('landing')} className="text-white/50 hover:text-white transition-colors uppercase tracking-[0.3em] text-[10px] font-black italic underline underline-offset-8">Return to Enlightenment</button>
             </div>
           </div>
         );

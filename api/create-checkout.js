@@ -9,19 +9,40 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { amount, email, isPhysical } = req.body;
+  const { amount, email, isPhysical, type } = req.body;
   
-  if (!amount) {
-      return res.status(400).json({ message: 'Missing amount' });
-  }
-
   try {
     const SUBSCRIPTION_PRICE_ID = 'price_1SxZRDIExvrU7SroGdH1j0ij'; 
+    const isBuyNow = type === 'buy_now';
+    const isDonationHigh = type === 'donation' && (amount >= 24);
+    const isDonationLow = type === 'donation' && (amount < 24);
 
     let sessionParams = {
         payment_method_types: ['card'],
-        line_items: [
-            // The One-Time Donation
+        line_items: [],
+        mode: (isDonationHigh) ? 'subscription' : 'payment',
+        success_url: '',
+        cancel_url: `https://realprayerbook.com/?payment_cancelled=true`,
+    };
+
+    if (isBuyNow) {
+        sessionParams.line_items.push({
+            price_data: {
+                currency: 'eur',
+                product_data: {
+                    name: 'Real Prayer Physical Book',
+                    description: 'The complete physical manuscript for your study. Includes instant PDF download access.',
+                },
+                unit_amount: 2400, // 24 EUR
+            },
+            quantity: 1,
+        });
+        sessionParams.shipping_address_collection = {
+            allowed_countries: ['US', 'CA', 'GB', 'IE', 'AU', 'NZ', 'FR', 'DE', 'ES', 'IT', 'NL', 'BE', 'PT', 'SE', 'NO', 'DK', 'FI', 'CH', 'AT'], 
+        };
+        sessionParams.success_url = `https://realprayerbook.com/?payment_success=true&type=buy_now`;
+    } else if (isDonationHigh) {
+        sessionParams.line_items = [
             {
                 price_data: {
                     currency: 'eur',
@@ -33,19 +54,29 @@ export default async function handler(req, res) {
                 },
                 quantity: 1,
             },
-            // The Recurring Membership (starts in 30 days)
             {
                 price: SUBSCRIPTION_PRICE_ID,
                 quantity: 1,
             }
-        ],
-        mode: 'subscription', 
-        subscription_data: {
+        ];
+        sessionParams.subscription_data = {
             trial_period_days: 30, 
-        },
-        success_url: `https://members.realprayerbook.com/?payment_success=true`,
-        cancel_url: `https://realprayerbook.com/?payment_cancelled=true`,
-    };
+        };
+        sessionParams.success_url = `https://members.realprayerbook.com/?payment_success=true&type=donation_high`;
+    } else { // donation_low or fallback
+        sessionParams.line_items.push({
+            price_data: {
+                currency: 'eur',
+                product_data: {
+                    name: 'Real Prayer Digital Supporter',
+                    description: 'One-time donation for the Complete Digital Archive (PDF).',
+                },
+                unit_amount: Math.round((amount || 5) * 100),
+            },
+            quantity: 1,
+        });
+        sessionParams.success_url = `https://realprayerbook.com/?payment_success=true&type=donation_low`;
+    }
     
     // If email is provided, pre-fill it
     if (email) {
