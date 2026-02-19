@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { saveShippingDetails } from '../utils/db'; // Keeping this if we want to save locally first, but checkout does it too.
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { saveShippingDetails } from '../utils/db';
 
 interface DonationUIProps {
   onComplete: () => void;
@@ -97,10 +98,22 @@ const DonationUI: React.FC<DonationUIProps> = ({ onComplete }) => {
     if (isPhysical) {
       gsap.fromTo(formRef.current, 
         { height: 0, opacity: 0 }, 
-        { height: 'auto', opacity: 1, duration: 0.8, ease: 'power4.out' }
+        { 
+          height: 'auto', 
+          opacity: 1, 
+          duration: 0.8, 
+          ease: 'power4.out',
+          onComplete: () => ScrollTrigger.refresh() // Refresh triggers when height changes
+        }
       );
     } else {
-      gsap.to(formRef.current, { height: 0, opacity: 0, duration: 0.5, ease: 'power4.in' });
+      gsap.to(formRef.current, { 
+        height: 0, 
+        opacity: 0, 
+        duration: 0.5, 
+        ease: 'power4.in',
+        onComplete: () => ScrollTrigger.refresh() // Refresh triggers when height changes
+      });
     }
   }, [isPhysical]);
 
